@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+###############################################################################
+# 旧系统：迁移包导出启动器
+# 使用方法：
+# 1. 只替换本段占位符。
+# 2. 把全文粘贴到旧系统服务器的阿里云 Workbench，按回车。
+# 3. 本启动器会下载仓库内最新导出脚本并执行，避免长脚本粘贴截断。
+###############################################################################
+
+export APP_NAME="wailearning-old-system"
+export ENV_FILE="/opt/wailearning-old-system/current/.env.production"
+export RELEASE_DIR="/opt/wailearning-old-system/current"
+export MIGRATION_OUTPUT_DIR="/root/wailearning-migration"
+export MIGRATION_LABEL="old-to-new-$(date +%Y%m%d%H%M%S)"
+
+export EXPORT_SCRIPT_URL="https://raw.githubusercontent.com/YinzhuCheng/wailearning-old-system/main/docs/migration/export_migration_bundle.sh"
+
+###############################################################################
+# 以下内容通常不需要修改。
+###############################################################################
+
+if [ "$(id -u)" -ne 0 ]; then
+  echo "请用 root 用户运行。"
+  exit 1
+fi
+
+ensure_downloader() {
+  if command -v curl >/dev/null 2>&1; then
+    return 0
+  fi
+  echo "当前系统缺少 curl，先安装下载工具。"
+  if command -v apt-get >/dev/null 2>&1; then
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y curl ca-certificates
+  elif command -v dnf >/dev/null 2>&1; then
+    dnf install -y curl ca-certificates
+  elif command -v yum >/dev/null 2>&1; then
+    yum install -y curl ca-certificates
+  else
+    echo "未识别系统包管理器，无法自动安装 curl。"
+    exit 1
+  fi
+}
+
+RUN_DIR="/root/${APP_NAME}-migration"
+REMOTE_SCRIPT="${RUN_DIR}/export_migration_bundle.sh"
+mkdir -p "${RUN_DIR}" "${MIGRATION_OUTPUT_DIR}"
+
+ensure_downloader
+echo "下载仓库内最新迁移导出脚本：${EXPORT_SCRIPT_URL}"
+curl -fsSL --retry 3 --connect-timeout 20 "${EXPORT_SCRIPT_URL}" -o "${REMOTE_SCRIPT}"
+chmod +x "${REMOTE_SCRIPT}"
+
+echo "开始导出迁移包。"
+bash "${REMOTE_SCRIPT}"
