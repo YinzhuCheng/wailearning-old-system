@@ -1,0 +1,166 @@
+# DD-CLASS Production Deployment Guide
+
+This guide targets Alibaba Cloud ECS on Ubuntu 22.04, Debian 12, and Alibaba Cloud Linux or CentOS-like systems.
+
+If you want the operational checklist for first go-live, DNS cutover, acceptance, and rollback, also read `RUNBOOK_ALIYUN.md`.
+
+## Architecture
+
+- Nginx serves the admin SPA at `/`
+- Nginx serves the parent portal SPA at `/parent/`
+- Nginx proxies `/api/*` to FastAPI on `127.0.0.1:8001`
+- FastAPI runs under `gunicorn + uvicorn worker` with `systemd`
+- PostgreSQL runs locally on the same server
+
+## Directory Layout
+
+- `/opt/dd-class/source` - deployed repository copy
+- `/opt/dd-class/venv` - Python virtual environment
+- `/opt/dd-class/shared/.env.production` - backend production env file
+- `/opt/dd-class/backups` - backup directory
+- `/var/www/wailearning.xyz/admin` - built admin frontend
+- `/var/www/wailearning.xyz/parent` - built parent portal
+
+## 1. Prepare the Server
+
+Run:
+
+```bash
+sudo bash scripts/setup_server.sh
+```
+
+The setup script auto-detects `apt-get`, `dnf`, or `yum`, and configures either `ufw` or `firewalld` when available.
+
+## 2. Create the Backend Env File
+
+Create `/opt/dd-class/shared/.env.production` from the repository template:
+
+```bash
+sudo install -m 640 .env.production /opt/dd-class/shared/.env.production
+sudo nano /opt/dd-class/shared/.env.production
+```
+
+Replace every `CHANGE_ME` value before continuing.
+
+Generate a strong secret key:
+
+```bash
+openssl rand -hex 32
+```
+
+## 3. Initialize PostgreSQL
+
+Run the SQL script with psql variables:
+
+```bash
+sudo -u postgres psql \
+  -v db_name='ddclass' \
+  -v db_user='ddclass' \
+  -v db_password='REPLACE_WITH_A_STRONG_DB_PASSWORD' \
+  -f scripts/init_db.sql
+```
+
+Make sure the values match `DATABASE_URL` in `/opt/dd-class/shared/.env.production`.
+
+## 4. Deploy the Backend
+
+```bash
+sudo bash scripts/deploy_backend.sh
+```
+
+Check the service:
+
+```bash
+sudo systemctl status ddclass-backend --no-pager
+sudo journalctl -u ddclass-backend -n 100 --no-pager
+```
+
+## 5. Deploy the Admin Frontend
+
+```bash
+sudo bash scripts/deploy_frontend.sh
+```
+
+## 6. Deploy the Parent Portal
+
+The parent portal is a separate Vite application and should be deployed independently. It is served from `/parent/`.
+
+```bash
+sudo bash scripts/deploy_parent_portal.sh
+```
+
+## 7. Configure DNS
+
+Create these DNS records:
+
+- `A wailearning.xyz -> <your ECS public IP>`
+- `A www.wailearning.xyz -> <your ECS public IP>`
+
+Wait until both records resolve correctly.
+
+## 8. Enable HTTPS
+
+After DNS is ready and Nginx is already serving HTTP:
+
+```bash
+sudo certbot --nginx -d wailearning.xyz -d www.wailearning.xyz
+```
+
+Enable automatic renewal check:
+
+```bash
+sudo systemctl status certbot.timer --no-pager
+```
+
+## 9. Validation Checklist
+
+- Open `http://wailearning.xyz` and confirm the admin login page loads
+- Open `http://wailearning.xyz/parent/` and confirm the parent portal loads
+- Open `http://wailearning.xyz/health` and confirm the backend health endpoint returns `healthy`
+- Log in with the bootstrap admin account configured in `.env.production`
+- Confirm there are no failing Nginx requests or backend tracebacks
+
+## 10. Logs and Troubleshooting
+
+Backend:
+
+```bash
+sudo journalctl -u ddclass-backend -f
+```
+
+Nginx:
+
+```bash
+sudo tail -f /var/log/nginx/access.log /var/log/nginx/error.log
+```
+
+PostgreSQL:
+
+```bash
+sudo journalctl -u postgresql -n 100 --no-pager
+```
+
+## 11. Update Workflow
+
+After updating the code on the server:
+
+```bash
+sudo bash scripts/deploy_all.sh
+sudo bash scripts/post_deploy_check.sh
+```
+
+## 12. Backups
+
+Database backup:
+
+```bash
+sudo -u postgres pg_dump -Fc ddclass > /opt/dd-class/backups/ddclass-$(date +%F-%H%M%S).dump
+```
+
+Static file and env backup:
+
+```bash
+sudo tar -czf /opt/dd-class/backups/ddclass-files-$(date +%F-%H%M%S).tar.gz \
+  /opt/dd-class/shared \
+  /var/www/wailearning.xyz
+```

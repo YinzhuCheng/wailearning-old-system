@@ -1,0 +1,151 @@
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Optional
+from urllib.parse import unquote, urlparse
+from uuid import uuid4
+
+from fastapi import HTTPException, Request, UploadFile
+
+from app.config import settings
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+UPLOADS_DIR = Path(settings.UPLOADS_DIR).expanduser() if settings.UPLOADS_DIR else BASE_DIR / "uploads"
+ATTACHMENTS_DIR = UPLOADS_DIR / "attachments"
+MAX_ATTACHMENT_SIZE = 200 * 1024 * 1024
+BLOCKED_ATTACHMENT_EXTENSIONS = {
+    ".apk",
+    ".app",
+    ".bat",
+    ".cmd",
+    ".com",
+    ".exe",
+    ".msi",
+    ".ps1",
+    ".scr",
+}
+BLOCKED_ATTACHMENT_CONTENT_TYPES = {
+    "application/x-msdownload",
+    "application/x-msdos-program",
+    "application/vnd.microsoft.portable-executable",
+}
+ATTACHMENT_URL_PREFIXES = (
+    "/uploads/attachments/",
+    "/api/uploads/attachments/",
+    "uploads/attachments/",
+)
+
+
+def get_attachment_directories() -> list[Path]:
+    directories: list[Path] = []
+    seen: set[str] = set()
+    upload_roots = [
+        UPLOADS_DIR,
+        BASE_DIR / "uploads",
+        BASE_DIR.parent / "shared" / "uploads",
+        BASE_DIR.parent / "uploads",
+    ]
+
+    for uploads_dir in upload_roots:
+        attachments_dir = Path(uploads_dir) / "attachments"
+        normalized = str(attachments_dir)
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        directories.append(attachments_dir)
+
+    return directories
+
+
+def ensure_upload_directories() -> None:
+    for attachments_dir in get_attachment_directories()[:1]:
+        attachments_dir.mkdir(parents=True, exist_ok=True)
+
+
+def validate_attachment_upload(file: UploadFile) -> str:
+    filename = (file.filename or "").strip()
+    if not filename:
+        raise HTTPException(status_code=400, detail="Please select a file to upload.")
+
+    extension = Path(filename).suffix.lower()
+    if extension in BLOCKED_ATTACHMENT_EXTENSIONS or file.content_type in BLOCKED_ATTACHMENT_CONTENT_TYPES:
+        raise HTTPException(status_code=400, detail="Executable files are not allowed.")
+
+    return extension
+
+
+async def save_attachment(file: UploadFile, request: Request) -> dict[str, object]:
+    ensure_upload_directories()
+    extension = validate_attachment_upload(file)
+    content = await file.read()
+    size = len(content)
+    if size == 0:
+        raise HTTPException(status_code=400, detail="The uploaded file is empty.")
+    if size > MAX_ATTACHMENT_SIZE:
+        raise HTTPException(status_code=400, detail="Attachment size must be 200 MB or smaller.")
+
+    stored_name = f"{uuid4().hex}{extension}"
+    target_path = ATTACHMENTS_DIR / stored_name
+    target_path.write_bytes(content)
+
+    return {
+        "attachment_name": file.filename,
+        "attachment_url": str(request.url_for("uploads", path=f"attachments/{stored_name}")),
+        "content_type": file.content_type,
+        "size": size,
+    }
+
+
+def delete_attachment_file(attachment_url: Optional[str]) -> None:
+    target_path = get_attachment_file_path(attachment_url)
+    if not target_path:
+        return
+    if target_path.exists():
+        target_path.unlink()
+
+
+def get_attachment_file_path(attachment_url: Optional[str]) -> Optional[Path]:
+    stored_name = get_attachment_stored_name(attachment_url)
+    if not stored_name:
+        return None
+
+    directories = get_attachment_directories()
+    for attachments_dir in directories:
+        candidate = attachments_dir / stored_name
+        if candidate.exists():
+            return candidate
+
+    return directories[0] / stored_name if directories else None
+
+
+def get_attachment_stored_name(attachment_url: Optional[str]) -> Optional[str]:
+    if not attachment_url:
+        return None
+
+    parsed_url = urlparse(attachment_url)
+    attachment_path = unquote(parsed_url.path or attachment_url).replace("\\", "/")
+
+    for prefix in ATTACHMENT_URL_PREFIXES:
+        if prefix in attachment_path:
+            suffix = attachment_path.split(prefix, 1)[1]
+            stored_name = Path(suffix).name
+            if stored_name:
+                return stored_name
+
+    fallback_name = Path(attachment_path).name
+    if fallback_name and fallback_name not in {"", ".", "..", "attachments"}:
+        return fallback_name
+
+    return None
+
+
+def get_attachment_download_name(attachment_url: Optional[str], attachment_name: Optional[str]) -> str:
+    normalized_name = Path((attachment_name or "").strip()).name
+    if normalized_name:
+        return normalized_name
+
+    target_path = get_attachment_file_path(attachment_url)
+    if target_path:
+        return target_path.name
+
+    return "attachment"

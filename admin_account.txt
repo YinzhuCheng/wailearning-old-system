@@ -1,0 +1,5 @@
+Public example only. Create the real admin account on the target server.
+
+ADMIN_USERNAME=<ADMIN_USERNAME>
+ADMIN_PASSWORD=<ADMIN_PASSWORD>
+ADMIN_EMAIL=<ADMIN_EMAIL>
