@@ -15,7 +15,11 @@ export RELEASE_DIR="/opt/wailearning-old-system/current"
 export MIGRATION_OUTPUT_DIR="/root/wailearning-migration"
 export MIGRATION_LABEL="old-to-new-$(date +%Y%m%d%H%M%S)"
 
-export EXPORT_SCRIPT_URL="https://raw.githubusercontent.com/YinzhuCheng/wailearning-old-system/main/docs/migration/export_migration_bundle.sh"
+export GITHUB_OWNER="YinzhuCheng"
+export GITHUB_REPO="wailearning-old-system"
+export GITHUB_BRANCH="main"
+export RAW_BASE="https://raw.githubusercontent.com"
+export EXPORT_SCRIPT_PATH="docs/migration/export_migration_bundle.sh"
 
 ###############################################################################
 # 以下内容通常不需要修改。
@@ -44,13 +48,22 @@ ensure_downloader() {
   fi
 }
 
+download_file() {
+  local url="$1"
+  local output="$2"
+  curl -fsSL --retry 3 --connect-timeout 20 "$url" -o "$output"
+}
+
 RUN_DIR="/root/${APP_NAME}-migration"
 REMOTE_SCRIPT="${RUN_DIR}/export_migration_bundle.sh"
 mkdir -p "${RUN_DIR}" "${MIGRATION_OUTPUT_DIR}"
 
 ensure_downloader
+EXPORT_SCRIPT_URL="${RAW_BASE}/${GITHUB_OWNER}/${GITHUB_REPO}"
+EXPORT_SCRIPT_URL="${EXPORT_SCRIPT_URL}/${GITHUB_BRANCH}"
+EXPORT_SCRIPT_URL="${EXPORT_SCRIPT_URL}/${EXPORT_SCRIPT_PATH}"
 echo "下载仓库内最新迁移导出脚本：${EXPORT_SCRIPT_URL}"
-curl -fsSL --retry 3 --connect-timeout 20 "${EXPORT_SCRIPT_URL}" -o "${REMOTE_SCRIPT}"
+download_file "${EXPORT_SCRIPT_URL}" "${REMOTE_SCRIPT}"
 chmod +x "${REMOTE_SCRIPT}"
 
 echo "开始导出迁移包。"
