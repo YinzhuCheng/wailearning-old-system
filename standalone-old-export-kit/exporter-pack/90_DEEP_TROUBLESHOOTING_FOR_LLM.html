@@ -34,6 +34,13 @@
     h2 { margin-top: 34px; font-size: 24px; }
     h3 { margin-top: 22px; font-size: 18px; }
     p, li, td { color: var(--muted); }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    a:hover { text-decoration: underline; }
     code, pre { font-family: Consolas, "SFMono-Regular", monospace; }
     code {
       padding: 2px 6px;
@@ -79,6 +86,8 @@
       border: 1px solid var(--line);
       text-align: left;
       vertical-align: top;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     th { background: #f6f9fe; color: var(--ink); }
     .small { font-size: 14px; }

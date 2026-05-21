@@ -6,36 +6,32 @@
   <title>导出者入口包</title>
   <style>
     :root {
-      --bg: #f4f7fb;
+      --bg: #f5f7fb;
       --card: #ffffff;
       --ink: #162033;
-      --muted: #55657e;
+      --muted: #5a6980;
       --line: #dbe4ef;
       --accent: #155eef;
-      --ok: #0a7f46;
-      --warn: #9a5b00;
-      --warn-bg: #fff5dc;
+      --warn-bg: #fff5dd;
       --ok-bg: #edf9f1;
-      --shadow: 0 16px 40px rgba(25, 42, 70, 0.08);
+      --shadow: 0 12px 30px rgba(18, 30, 47, 0.08);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      background:
-        radial-gradient(circle at top right, rgba(21, 94, 239, 0.08), transparent 28%),
-        linear-gradient(180deg, #f7faff 0%, var(--bg) 100%);
+      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
       color: var(--ink);
-      font: 16px/1.65 "Microsoft YaHei", "PingFang SC", sans-serif;
+      font: 16px/1.72 "Microsoft YaHei", "PingFang SC", sans-serif;
     }
     main {
-      max-width: 1120px;
+      max-width: 920px;
       margin: 0 auto;
-      padding: 36px 22px 72px;
+      padding: 28px 16px 64px;
     }
-    h1, h2, h3 { line-height: 1.2; margin: 0 0 14px; }
-    h1 { font-size: 34px; }
-    h2 { margin-top: 34px; font-size: 24px; }
-    h3 { margin-top: 22px; font-size: 18px; }
+    h1, h2, h3 { margin: 0 0 14px; line-height: 1.2; }
+    h1 { font-size: 32px; }
+    h2 { margin-top: 28px; font-size: 22px; }
+    h3 { margin-top: 18px; font-size: 18px; }
     p, li, td { color: var(--muted); }
     a {
       color: var(--accent);
@@ -51,93 +47,47 @@
       padding: 2px 6px;
       border-radius: 6px;
       background: #eef3fb;
-      color: #20304c;
+      color: #22304a;
     }
     pre {
       margin: 0;
       overflow-x: auto;
       padding: 14px 16px;
       border-radius: 12px;
-      background: #0f1727;
-      color: #f2f6fd;
+      background: #101828;
+      color: #f4f7fd;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
-    .hero, .panel, .step, .tip, .ref {
+    .hero, .card, .warn, .ok {
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: 18px;
       box-shadow: var(--shadow);
-    }
-    .hero {
-      padding: 26px 24px;
-    }
-    .hero p {
-      max-width: 840px;
-      margin: 0;
-      font-size: 17px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 22px;
-    }
-    .panel {
       padding: 18px 18px 16px;
+      margin-top: 18px;
     }
-    .panel h3 { margin-top: 0; }
-    .filelist {
+    .warn { background: var(--warn-bg); }
+    .ok { background: var(--ok-bg); }
+    .stack {
       display: grid;
       gap: 10px;
       margin-top: 10px;
     }
-    .file {
+    .linkbox {
       padding: 12px 14px;
       border-radius: 14px;
+      border: 1px solid #e4ecf8;
       background: #f8fbff;
-      border: 1px solid #e6eef9;
     }
-    .file strong {
+    .label {
       display: block;
+      margin-bottom: 6px;
       color: var(--ink);
-      margin-bottom: 4px;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-    .timeline {
-      display: grid;
-      gap: 16px;
-      margin-top: 18px;
-    }
-    .step {
-      padding: 18px 18px 16px;
-    }
-    .step .num {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      margin-bottom: 10px;
-      border-radius: 999px;
-      background: var(--accent);
-      color: #fff;
       font-weight: 700;
     }
-    .tip {
-      margin-top: 16px;
-      padding: 16px 18px;
-      background: var(--warn-bg);
-      border-color: #f0d9a7;
-    }
-    .ok {
-      background: var(--ok-bg);
-      border-color: #bfe6cd;
-    }
-    .flow {
-      margin-top: 18px;
-      padding: 14px;
-    }
-    svg { width: 100%; height: auto; display: block; }
+    ul { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 6px 0; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -148,28 +98,18 @@
       box-shadow: var(--shadow);
     }
     th, td {
-      padding: 12px 14px;
       border: 1px solid var(--line);
+      padding: 12px 14px;
       text-align: left;
       vertical-align: top;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
-    th {
-      background: #f6f9fe;
-      color: var(--ink);
-    }
-    .ref {
-      margin-top: 18px;
-      padding: 18px;
-    }
-    .small {
-      font-size: 14px;
-    }
-    @media (max-width: 860px) {
-      .grid { grid-template-columns: 1fr; }
+    th { background: #f6f9fe; color: var(--ink); }
+    .small { font-size: 14px; }
+    @media (max-width: 760px) {
       h1 { font-size: 28px; }
-      main { padding: 24px 14px 56px; }
+      main { padding: 20px 12px 48px; }
     }
   </style>
 </head>
@@ -178,228 +118,80 @@
   <section class="hero">
     <h1>旧系统导出者入口包</h1>
     <p>
-      这个文件夹是专门给“旧系统导出执行者”的。只需要按顺序看本页，然后打开
-      对应的 <code>.txt</code> 或脚本即可，不需要在整个仓库里找文件。
-      本页已经把“旧服务器导出”、“下载到 Windows”、“Windows 校验”串成一条最短路径。
+      这个文件夹是专门给旧系统导出执行者的。
+      如果你只想顺利完成工作，不想研究细节，就按这个页面的顺序往下走。
+      这个页面只保留最少信息，复杂排障说明放在下级文档。
     </p>
   </section>
 
-  <section class="flow panel">
-    <h2>一眼看懂流程</h2>
-    <svg viewBox="0 0 1100 260" aria-label="导出流程图">
-      <defs>
-        <linearGradient id="gradA" x1="0" x2="1">
-          <stop offset="0%" stop-color="#155eef"/>
-          <stop offset="100%" stop-color="#4f8fff"/>
-        </linearGradient>
-      </defs>
-      <rect x="20" y="44" width="190" height="100" rx="22" fill="#ffffff" stroke="#dbe4ef" stroke-width="2"/>
-      <text x="115" y="82" text-anchor="middle" font-size="26" fill="#162033" font-family="Microsoft YaHei">1. 打开代码流</text>
-      <text x="115" y="114" text-anchor="middle" font-size="18" fill="#55657e" font-family="Microsoft YaHei">直接粘贴版 或 脚本版</text>
-
-      <rect x="250" y="44" width="190" height="100" rx="22" fill="#ffffff" stroke="#dbe4ef" stroke-width="2"/>
-      <text x="345" y="82" text-anchor="middle" font-size="26" fill="#162033" font-family="Microsoft YaHei">2. Workbench 执行</text>
-      <text x="345" y="114" text-anchor="middle" font-size="18" fill="#55657e" font-family="Microsoft YaHei">旧服务器导出 tar.gz</text>
-
-      <rect x="480" y="44" width="190" height="100" rx="22" fill="#ffffff" stroke="#dbe4ef" stroke-width="2"/>
-      <text x="575" y="82" text-anchor="middle" font-size="26" fill="#162033" font-family="Microsoft YaHei">3. 服务器内校验</text>
-      <text x="575" y="114" text-anchor="middle" font-size="18" fill="#55657e" font-family="Microsoft YaHei">verify_export_bundle.sh</text>
-
-      <rect x="710" y="44" width="190" height="100" rx="22" fill="#ffffff" stroke="#dbe4ef" stroke-width="2"/>
-      <text x="805" y="82" text-anchor="middle" font-size="26" fill="#162033" font-family="Microsoft YaHei">4. 下载到 Windows</text>
-      <text x="805" y="114" text-anchor="middle" font-size="18" fill="#55657e" font-family="Microsoft YaHei">下载 tar.gz + .sha256</text>
-
-      <rect x="940" y="44" width="140" height="100" rx="22" fill="url(#gradA)"/>
-      <text x="1010" y="82" text-anchor="middle" font-size="26" fill="#ffffff" font-family="Microsoft YaHei">5. 本地校验</text>
-      <text x="1010" y="114" text-anchor="middle" font-size="18" fill="#edf5ff" font-family="Microsoft YaHei">PowerShell</text>
-
-      <path d="M210 94 H250" stroke="#87a3d8" stroke-width="6" stroke-linecap="round"/>
-      <path d="M440 94 H480" stroke="#87a3d8" stroke-width="6" stroke-linecap="round"/>
-      <path d="M670 94 H710" stroke="#87a3d8" stroke-width="6" stroke-linecap="round"/>
-      <path d="M900 94 H940" stroke="#87a3d8" stroke-width="6" stroke-linecap="round"/>
-
-      <rect x="254" y="176" width="596" height="56" rx="18" fill="#f8fbff" stroke="#dbe4ef" stroke-width="2"/>
-      <text x="552" y="212" text-anchor="middle" font-size="18" fill="#55657e" font-family="Microsoft YaHei">
-        如果失败，把复杂版排障说明和终端输出一起交给排障者或 LLM
-      </text>
-    </svg>
-  </section>
-
-  <section class="grid">
-    <div class="panel">
-      <h2>你要打开哪些文件</h2>
-      <div class="filelist">
-        <div class="file">
-          <strong><a href="./01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a></strong>
-          直接粘贴到 Workbench 的完整版本。优先用它，最不容易受网络和 GitHub 访问问题影响。
-        </div>
-        <div class="file">
-          <strong><a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a></strong>
-          通过 GitHub raw 下载脚本后再执行。适合后续复用最新版脚本。
-        </div>
-        <div class="file">
-          <strong><a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a></strong>
-          导出后，先在旧服务器上校验导出包。
-        </div>
-        <div class="file">
-          <strong><a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a></strong>
-          把包下载到 Windows 后，用它核对 SHA256。
-        </div>
-        <div class="file">
-          <strong><a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a></strong>
-          专门讲 Workbench 里如何把迁移包下载到 Windows，并配示意图。
-        </div>
-        <div class="file">
-          <strong><a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a></strong>
-          出现异常时，把它和终端报错一起交给排障者或 LLM。
-        </div>
+  <section class="card">
+    <h2>你现在应该先用哪个版本</h2>
+    <div class="stack">
+      <div class="linkbox">
+        <span class="label">首选，最稳妥</span>
+        用 <a href="./01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a>。
+        这是整段直接粘贴到 Workbench 的版本，不依赖 GitHub raw。
       </div>
-    </div>
-
-    <div class="panel">
-      <h2>这个文件夹里放了什么</h2>
-      <div class="filelist">
-        <div class="file">
-          <strong><a href="./03_standalone_old_export.sh">03_standalone_old_export.sh</a></strong>
-          真正执行导出的主脚本。
-        </div>
-        <div class="file">
-          <strong><a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a></strong>
-          检查导出包结构、内部压缩包和 SHA256。
-        </div>
-        <div class="file">
-          <strong><a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a></strong>
-          Windows 本地核对下载文件。
-        </div>
-        <div class="file">
-          <strong><a href="./06_post_import_verify.sh">06_post_import_verify.sh</a></strong>
-          新系统导入后做数据库与附件对账。通常给迁移接手者使用。
-        </div>
-        <div class="file">
-          <strong><a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a></strong>
-          Workbench 下载回 Windows 的独立图示说明页。
-        </div>
-        <div class="file">
-          <strong><a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a></strong>
-          复杂版说明，包含常见坑、兼容性和排障清单。
-        </div>
+      <div class="linkbox">
+        <span class="label">备选，适合以后反复执行</span>
+        用 <a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a>。
+        这是先下载脚本再执行的版本，适合后续复用最新版脚本。
       </div>
     </div>
   </section>
 
-  <section class="timeline">
-    <article class="step">
-      <div class="num">1</div>
-      <h3>先选执行版本</h3>
-      <p>
-        优先使用 <a href="./01_WORKBENCH_DIRECT_PASTE.txt">直接粘贴版</a>。
-        它把主脚本完整内嵌进文本里，不依赖 GitHub，也更不容易因为外部网络失败而中断。
-      </p>
-      <p>
-        只有在你明确需要“每次都从 GitHub 取最新脚本”时，才用
-        <a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">脚本版</a>。
-      </p>
-    </article>
-
-    <article class="step">
-      <div class="num">2</div>
-      <h3>Workbench 执行要求</h3>
-      <p>
-        必须使用 <code>root</code> 登录旧服务器，并且优先使用 <strong>终端连接</strong>。
-        阿里云官方文档明确写到：会话管理连接不支持文件管理，终端连接才支持可视化下载。
-      </p>
-      <div class="tip">
-        <strong>不要踩这个坑：</strong>
-        如果你登录后看不到文件树、看不到下载入口，或提示当前登录方式不支持文件管理，
-        大概率是用了会话管理连接，不是终端连接。请重新连接。
-      </div>
-    </article>
-
-    <article class="step">
-      <div class="num">3</div>
-      <h3>导出完成后不要立刻离开</h3>
-      <p>
-        导出成功后，屏幕上会给出两个路径：
-      </p>
-      <pre><code>/root/wailearning-migration/old-to-new-YYYYMMDDHHMMSS.tar.gz
-/root/wailearning-migration/old-to-new-YYYYMMDDHHMMSS.tar.gz.sha256</code></pre>
-      <p>
-        这两个文件还在旧服务器里，没有自动到 Windows。本阶段应继续在旧服务器执行：
-      </p>
-      <pre><code>bash ./04_verify_export_bundle.sh /root/wailearning-migration/old-to-new-20260521120000.tar.gz</code></pre>
-    </article>
-
-    <article class="step">
-      <div class="num">4</div>
-      <h3>把文件下载到 Windows</h3>
-      <p>
-        下载这两个文件：
-      </p>
-      <ul>
-        <li><code>old-to-new-....tar.gz</code></li>
-        <li><code>old-to-new-....tar.gz.sha256</code></li>
-      </ul>
-      <p>
-        阿里云官方文档当前支持在 Workbench 文件树里右键文件下载到本地。
-        但如果当前连接方式不支持文件管理，或者下载速度过慢，再改用 <code>scp</code>、<code>sftp</code> 或 OSS 中转。
-      </p>
-    </article>
-
-    <article class="step">
-      <div class="num">5</div>
-      <h3>Windows 上做最后校验</h3>
-      <pre><code>powershell -ExecutionPolicy Bypass -File .\05_windows_verify_bundle.ps1 `
-  -BundlePath C:\Users\you\Downloads\old-to-new-20260521120000.tar.gz `
-  -Sha256File C:\Users\you\Downloads\old-to-new-20260521120000.tar.gz.sha256</code></pre>
-      <div class="tip ok">
-        当 PowerShell 输出“校验通过”后，再把这个 <code>tar.gz</code> 交给迁移接手者。
-      </div>
-    </article>
+  <section class="card">
+    <h2>最短工作流程</h2>
+    <ol>
+      <li>先在旧服务器的 Workbench 里执行导出代码流。</li>
+      <li>导出完成后，不要离开旧服务器，先运行 <a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a> 做包校验。</li>
+      <li>把 <code>.tar.gz</code> 和同名 <code>.sha256</code> 下载到 Windows。</li>
+      <li>在 Windows 上运行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> 做 SHA256 校验。</li>
+      <li>校验通过后，再把包交给迁移接手者。</li>
+    </ol>
   </section>
 
-  <section class="panel">
-    <h2>已经帮你规避的坑</h2>
-    <table>
-      <tr>
-        <th>坑</th>
-        <th>本包如何避免</th>
-      </tr>
-      <tr>
-        <td>长路径或长命令在 Workbench 里被自动换行截断</td>
-        <td>提供了完整复制粘贴版，且控制了操作流中的长行；不要只复制中间片段。</td>
-      </tr>
-      <tr>
-        <td>只导出，不知道怎么回到 Windows</td>
-        <td>本包把“旧服务器校验”和“下载到 Windows / Windows 校验”补成了标准步骤。</td>
-      </tr>
-      <tr>
-        <td>下载了 <code>tar.gz</code>，但不知道文件是否损坏</td>
-        <td>导出脚本会生成同目录 <code>.sha256</code>，并提供 Windows 校验脚本。</td>
-      </tr>
-      <tr>
-        <td>Workbench 文件管理不可用</td>
-        <td>文档明确提示要用终端连接，不要用会话管理连接。</td>
-      </tr>
-      <tr>
-        <td>版本兼容性不清楚</td>
-        <td>复杂版 HTML 单独写了兼容性和排障思路。</td>
-      </tr>
-    </table>
+  <section class="warn">
+    <strong>关键提醒：</strong>
+    “导出完成”只代表文件已经在旧服务器生成，不代表已经自动到了 Windows。
+    下载到 Windows 和 Windows 本地校验，是正式步骤，不要跳过。
   </section>
 
-  <section class="ref">
-    <h2>官方参考</h2>
-    <p class="small">
-      我核对过阿里云官方文档。到 <strong>2026 年 3 月 13 日</strong> 的英文文档，以及
-      <strong>2025 年 11 月 26 日</strong> 的中文文档，都明确说明：
-      Workbench 支持在 Linux 实例中通过文件管理下载文件到本地；
-      但会话管理连接不支持该功能，且高峰期传输可能较慢。
+  <section class="card">
+    <h2>如果你需要图示版说明</h2>
+    <p>
+      打开 <a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a>。
+      它专门讲如何从 Workbench 把迁移包带回 Windows。
     </p>
+  </section>
+
+  <section class="card">
+    <h2>如果出错，给 LLM 哪些东西</h2>
     <ul>
-      <li><a href="https://www.alibabacloud.com/help/doc-detail/478698.html">Alibaba Cloud official doc: Use Workbench to upload or download files</a></li>
-      <li><a href="https://www.alibabacloud.com/help/zh/ecs/user-guide/use-workbench-to-upload-a-file-to-a-linux-instance">阿里云官方文档：使用 Workbench 上传或下载文件</a></li>
-      <li><a href="https://www.alibabacloud.com/help/en/ecs/user-guide/choose-how-to-transfer-files">Alibaba Cloud official doc: choose how to transfer files</a></li>
-      <li><a href="https://www.alibabacloud.com/help/en/ecs/user-guide/transfer-files-to-an-instance-using-object-storage">Alibaba Cloud official doc: transfer files using OSS</a></li>
+      <li>你实际执行的代码流：<a href="./01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a> 或 <a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a></li>
+      <li>主脚本：<a href="./03_standalone_old_export.sh">03_standalone_old_export.sh</a></li>
+      <li>旧服务器校验脚本：<a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a></li>
+      <li>Workbench 最近 200 行输出</li>
+      <li>如果包已生成：<code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code></li>
+      <li>复杂版排障说明：<a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a></li>
+    </ul>
+    <div class="ok">
+      最小原则：不要只给一句报错。至少把“实际用了哪个代码流 + 主脚本 + 终端输出”一起给出去。
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>这个文件夹里的文件</h2>
+    <ul>
+      <li><a href="./01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a> - 直接粘贴版代码流</li>
+      <li><a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a> - 脚本下载版代码流</li>
+      <li><a href="./03_standalone_old_export.sh">03_standalone_old_export.sh</a> - 主导出脚本</li>
+      <li><a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a> - 旧服务器导出包校验脚本</li>
+      <li><a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> - Windows 本地校验脚本</li>
+      <li><a href="./06_post_import_verify.sh">06_post_import_verify.sh</a> - 导入后验证脚本</li>
+      <li><a href="./10_COORDINATOR_NOTES.html">10_COORDINATOR_NOTES.html</a> - 协调人说明</li>
+      <li><a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a> - 下载图示说明</li>
+      <li><a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a> - 复杂版排障说明</li>
     </ul>
   </section>
 </main>
