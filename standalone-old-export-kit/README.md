@@ -30,7 +30,7 @@
 1. 在旧服务器用 Workbench 执行 `01_WORKBENCH_DIRECT_PASTE.txt` 或 `02_WORKBENCH_DOWNLOAD_SCRIPT.txt`。
 2. 旧服务器先跑 `04_verify_export_bundle.sh`。
 3. 把 `.tar.gz` 和同名 `.sha256` 下载到 Windows。
-4. 在 Windows 上跑 `05_windows_verify_bundle.ps1`。
+4. 在 Windows 上按 `20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html` 里的命令跑 `05_windows_verify_bundle.ps1`，给它传入 `-BundlePath` 和 `-Sha256File`。
 5. 再把包交给新系统导入流程。
 6. 导入后跑 `06_post_import_verify.sh`。
 

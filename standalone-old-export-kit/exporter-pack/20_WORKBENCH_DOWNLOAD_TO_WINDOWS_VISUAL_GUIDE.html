@@ -118,7 +118,7 @@
     <li>在文件树里找到导出目录，通常是 <code>/root/wailearning-migration</code>。</li>
     <li>对这两个文件分别执行“下载”：<code>.tar.gz</code> 和 <code>.sha256</code>。Workbench 2.0 可以在右侧文件操作里点“下载”，也可以在左侧文件树右键下载；Workbench 1.0 通常是在文件树中右键文件并选择“下载文件”。</li>
     <li>把它们放到 Windows 的一个短路径目录里，例如 <code>C:\Users\you\Downloads\wailearning\</code>。这里的 <code>you</code> 只是示例，换成你当前 Windows 用户名或你实际保存的位置。</li>
-    <li>运行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> 做本地校验。</li>
+    <li>按下面“Windows 本地校验怎么运行”执行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a>。</li>
   </ol>
 
   <div class="callout warn">
@@ -138,12 +138,31 @@
     <li><strong>权限不足：</strong>请确认是 <code>root</code> 用户，至少能读取导出目录。</li>
   </ul>
 
+  <h2>Windows 本地校验怎么运行</h2>
+  <ol>
+    <li>在 Windows 上打开 PowerShell。</li>
+    <li>切到这个工具包的 <code>exporter-pack</code> 目录，也就是 <code>05_windows_verify_bundle.ps1</code> 所在目录。</li>
+    <li>把下面命令里的两个文件路径，改成你刚下载到 Windows 的真实 <code>.tar.gz</code> 和 <code>.sha256</code> 路径。</li>
+  </ol>
+
   <div class="callout note">
-    <strong>校验命令示例：</strong>
+    <strong>推荐写法：先进入脚本目录，再运行脚本。</strong>
     <pre><code>powershell -ExecutionPolicy Bypass -File .\05_windows_verify_bundle.ps1 `
   -BundlePath C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz `
   -Sha256File C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz.sha256</code></pre>
-    这条命令里的两个 Windows 路径也只是示例。换机器后，把它们改成你实际下载到本机的 <code>.tar.gz</code> 和 <code>.sha256</code> 路径即可。
+    这条命令里的 <code>.\05_windows_verify_bundle.ps1</code> 表示“当前目录下的脚本”。如果你没有先切到 <code>exporter-pack</code>，就要把 <code>-File</code> 后面改成脚本的完整路径。
+  </div>
+
+  <div class="callout note">
+    <strong>完整路径写法：不切目录也能运行。</strong>
+    <pre><code>powershell -ExecutionPolicy Bypass -File C:\path\to\exporter-pack\05_windows_verify_bundle.ps1 `
+  -BundlePath C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz `
+  -Sha256File C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz.sha256</code></pre>
+    把 <code>C:\path\to\exporter-pack\05_windows_verify_bundle.ps1</code> 换成你这份工具包里脚本的真实位置。
+  </div>
+
+  <div class="callout warn">
+    <strong>看到“校验通过”才算完成：</strong>脚本会检查迁移包是否存在、文件大小是否为 0、SHA256 是否匹配，并在 Windows 自带 <code>tar.exe</code> 可用时尝试读取压缩包目录。
   </div>
 </main>
 </body>
