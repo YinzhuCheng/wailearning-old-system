@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Workbench 下载到 Windows 图示说明</title>
+  <style>
+    :root {
+      --ink: #182336;
+      --muted: #55647b;
+      --line: #d7e1ed;
+      --card: #ffffff;
+      --bg: #f4f7fb;
+      --accent: #155eef;
+      --warn: #8d5a00;
+      --warn-bg: #fff5dd;
+      --ok-bg: #edf9f1;
+      --shadow: 0 14px 36px rgba(18, 30, 47, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(21, 94, 239, 0.08), transparent 24%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--ink);
+      font: 16px/1.68 "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 18px 68px;
+    }
+    h1, h2, h3 { line-height: 1.2; margin: 0 0 14px; }
+    h1 { font-size: 34px; }
+    h2 { margin-top: 30px; font-size: 24px; }
+    h3 { margin-top: 18px; font-size: 18px; }
+    p, li, td { color: var(--muted); }
+    code, pre {
+      font-family: Consolas, "SFMono-Regular", monospace;
+    }
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #eef3fb;
+      color: #22304a;
+    }
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #0f1727;
+      color: #f3f7fd;
+    }
+    .hero, .card, .warn, .ok {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 20px 20px 18px;
+      margin-top: 18px;
+    }
+    .warn { background: var(--warn-bg); }
+    .ok { background: var(--ok-bg); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .stepbox {
+      padding: 18px;
+      border: 1px solid #e4ecf8;
+      border-radius: 16px;
+      background: #f8fbff;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      background: var(--card);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f6f9fe;
+      color: var(--ink);
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 8px;
+    }
+    .small { font-size: 14px; }
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+      main { padding: 24px 14px 56px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <h1>Workbench 下载到 Windows 图示说明</h1>
+    <p>
+      这个页面只讲一件事：旧服务器里已经有迁移包后，怎么把它稳妥地下载到 Windows，
+      并避免把“下载失败 / 文件损坏 / 连接方式不对”误判成脚本问题。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>先确认你已经有这两个文件</h2>
+    <pre><code>/root/wailearning-migration/old-to-new-YYYYMMDDHHMMSS.tar.gz
+/root/wailearning-migration/old-to-new-YYYYMMDDHHMMSS.tar.gz.sha256</code></pre>
+    <p>
+      如果你还没有这两个文件，请先回到
+      <code>00_START_HERE_EXPORTER.html</code>，完成导出和旧服务器校验。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>示意图</h2>
+    <svg viewBox="0 0 1060 360" aria-label="Workbench 下载示意图">
+      <rect x="24" y="40" width="470" height="278" rx="24" fill="#ffffff" stroke="#d7e1ed" stroke-width="2"/>
+      <text x="58" y="76" font-size="28" fill="#182336" font-family="Microsoft YaHei">旧服务器 Workbench 终端</text>
+      <rect x="58" y="100" width="402" height="170" rx="18" fill="#111827"/>
+      <text x="78" y="132" font-size="20" fill="#e5eefc" font-family="Consolas">迁移包：/root/wailearning-migration/old-to-new-....tar.gz</text>
+      <text x="78" y="165" font-size="20" fill="#e5eefc" font-family="Consolas">SHA256：/root/wailearning-migration/old-to-new-....tar.gz.sha256</text>
+      <text x="78" y="212" font-size="18" fill="#94a7c5" font-family="Microsoft YaHei">然后切到文件管理器 / 文件树</text>
+      <text x="78" y="239" font-size="18" fill="#94a7c5" font-family="Microsoft YaHei">在该目录里下载两个文件</text>
+
+      <rect x="560" y="40" width="476" height="278" rx="24" fill="#ffffff" stroke="#d7e1ed" stroke-width="2"/>
+      <text x="592" y="76" font-size="28" fill="#182336" font-family="Microsoft YaHei">Windows 本地</text>
+      <rect x="594" y="100" width="408" height="62" rx="16" fill="#f7fbff" stroke="#dce7f5"/>
+      <text x="618" y="138" font-size="20" fill="#182336" font-family="Microsoft YaHei">Downloads\old-to-new-....tar.gz</text>
+      <rect x="594" y="180" width="408" height="62" rx="16" fill="#f7fbff" stroke="#dce7f5"/>
+      <text x="618" y="218" font-size="20" fill="#182336" font-family="Microsoft YaHei">Downloads\old-to-new-....tar.gz.sha256</text>
+      <text x="594" y="272" font-size="18" fill="#55647b" font-family="Microsoft YaHei">随后运行 PowerShell 校验脚本</text>
+
+      <path d="M496 178 C534 178 534 178 560 178" stroke="#155eef" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <polygon points="550,162 580,178 550,194" fill="#155eef"/>
+    </svg>
+  </section>
+
+  <section class="grid">
+    <div class="stepbox">
+      <div class="badge">1</div>
+      <h3>确认连接方式正确</h3>
+      <p>
+        如果你在 Workbench 里看不到文件树、文件管理按钮、或下载入口，
+        先不要怀疑脚本。先判断自己是不是用了 <strong>会话管理连接</strong>。
+      </p>
+      <p>
+        阿里云官方文档当前明确说明：<strong>会话管理连接不支持文件管理</strong>。
+        需要改成 <strong>终端连接</strong>。
+      </p>
+    </div>
+
+    <div class="stepbox">
+      <div class="badge">2</div>
+      <h3>进入导出目录</h3>
+      <p>
+        在旧服务器终端里记下导出目录，通常是：
+      </p>
+      <pre><code>/root/wailearning-migration</code></pre>
+      <p>
+        目录里至少应该看到一个 <code>.tar.gz</code> 和一个同名 <code>.sha256</code>。
+      </p>
+    </div>
+
+    <div class="stepbox">
+      <div class="badge">3</div>
+      <h3>下载两个文件</h3>
+      <p>
+        只下载这两个即可：
+      </p>
+      <ul>
+        <li><code>old-to-new-....tar.gz</code></li>
+        <li><code>old-to-new-....tar.gz.sha256</code></li>
+      </ul>
+      <p>
+        不要只下载前者。否则 Windows 端无法判断下载过程是否损坏。
+      </p>
+    </div>
+
+    <div class="stepbox">
+      <div class="badge">4</div>
+      <h3>PowerShell 校验</h3>
+      <pre><code>powershell -ExecutionPolicy Bypass -File .\05_windows_verify_bundle.ps1 `
+  -BundlePath C:\Users\you\Downloads\old-to-new-20260521120000.tar.gz `
+  -Sha256File C:\Users\you\Downloads\old-to-new-20260521120000.tar.gz.sha256</code></pre>
+      <p>
+        看到“校验通过”再继续交给迁移接手者。
+      </p>
+    </div>
+  </section>
+
+  <section class="warn">
+    <strong>最常见误区：</strong>
+    导出者看到 Workbench 里打印了“导出完成”，就以为文件已经到了本地 Windows。
+    这不对。导出完成只代表文件已经在旧服务器生成，下载动作还没有发生。
+  </section>
+
+  <section class="card">
+    <h2>下载失败时怎么分辨问题在哪</h2>
+    <table>
+      <tr>
+        <th>现象</th>
+        <th>更可能的原因</th>
+        <th>先做什么</th>
+      </tr>
+      <tr>
+        <td>看不到文件树或下载按钮</td>
+        <td>连接方式不对，常见是会话管理连接</td>
+        <td>改用终端连接</td>
+      </tr>
+      <tr>
+        <td>文件能下载，但特别慢</td>
+        <td>Workbench 高峰期传输慢</td>
+        <td>等待，或改用 <code>scp</code> / <code>sftp</code> / OSS 中转</td>
+      </tr>
+      <tr>
+        <td>Windows 上校验 SHA256 不匹配</td>
+        <td>下载过程损坏 / 截断 / 混淆了文件版本</td>
+        <td>重新下载 <code>.tar.gz</code> 和 <code>.sha256</code></td>
+      </tr>
+      <tr>
+        <td>找不到 <code>.sha256</code></td>
+        <td>导出脚本运行的是旧版或服务器工具降级</td>
+        <td>先回看导出终端输出，必要时重新跑最新版流程</td>
+      </tr>
+    </table>
+  </section>
+
+  <section class="ok">
+    <strong>官方依据：</strong>
+    我核对过阿里云官方文档。当前文档明确支持 Linux 实例在 Workbench 中下载文件到本地，
+    同时也明确写了会话管理连接不支持文件管理，高峰期上传下载速度可能下降。
+  </section>
+
+  <section class="card">
+    <h2>官方参考链接</h2>
+    <ul>
+      <li><a href="https://www.alibabacloud.com/help/doc-detail/478698.html">Use Workbench to upload or download files</a></li>
+      <li><a href="https://www.alibabacloud.com/help/zh/ecs/user-guide/use-workbench-to-upload-a-file-to-a-linux-instance">使用 Workbench 上传或下载文件</a></li>
+      <li><a href="https://www.alibabacloud.com/help/en/ecs/user-guide/choose-how-to-transfer-files">choose how to transfer files</a></li>
+      <li><a href="https://www.alibabacloud.com/help/en/ecs/user-guide/transfer-files-to-an-instance-using-object-storage">transfer files using OSS</a></li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
