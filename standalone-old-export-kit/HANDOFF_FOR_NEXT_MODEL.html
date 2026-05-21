@@ -83,8 +83,8 @@
   <div class="callout note">
     <strong>当前交付主目录：</strong><code>C:\Users\bloom\.agent-run\wailearning-old-system-push\standalone-old-export-kit</code><br>
     <strong>最近一次已 push 的旧仓远端：</strong><code>https://github.com/YinzhuCheng/wailearning-old-system.git</code><br>
-    <strong>最近一次已 push 提交：</strong><code>aab680a</code><br>
-    <strong>本地当前状态：</strong>已新增本交接文档提交，当前本地领先远端 1 个提交；具体哈希以 <code>git log -1 --oneline</code> 为准。
+    <strong>最近一次已确认 push 的提交：</strong><code>aab680a</code><br>
+    <strong>本地当前状态：</strong>本地可能包含后续文档收口提交；以 <code>git status -sb</code> 和 <code>git log -1 --oneline</code> 为准。
   </div>
 
   <h2>本轮已完成</h2>
@@ -97,7 +97,7 @@
     <li>补了面向编码Agents调试指令的文档和 LLM 排障文档，明确“出错时最少该给什么文件和输出”。</li>
     <li>对交付目录里的全部 HTML 做了自动化横向溢出扫描，当前结果是 0 超框。</li>
     <li>复跑了本地闭环验证：旧系统伪数据、迁移适配、新系统启动、Playwright 真实截图，已成功生成新一轮截图。</li>
-    <li>把旧仓文档修复提交并 push 到远端，多次提交后远端最新为 <code>aab680a</code>；随后新增本交接文档提交，本地当前领先远端 1 个提交。</li>
+    <li>把旧仓文档修复提交并 push 到远端，多次提交后已确认远端包含 <code>aab680a</code>；后续又有本地文档收口提交，是否已推送请以当前 <code>git status -sb</code> 为准。</li>
   </ol>
 
   <h2>本轮关键产物</h2>
@@ -124,8 +124,8 @@
   <div class="callout warn">
     <strong>我仍然担心的点：</strong>
     <ul>
-      <li><strong>Workbench 界面差异：</strong>我已经把文档写得更“版本兼容”，但没有办法在本机真实打开阿里云 Workbench 去逐像素确认入口文案和菜单位置。后续模型应继续从“人类执行视角”审一次下载说明是否足够稳。</li>
-      <li><strong>大文件下载兜底：</strong>文档已提到 <code>scp/sftp/OSS</code> 作为大包兜底，但没有把这些兜底方案展开成完整操作手册。若后续面向真实大包交付，建议再补一页“Workbench 下载失败的替代流程”。</li>
+      <li><strong>Workbench 界面差异：</strong>下载页已经按阿里云官方文档补了 Workbench 2.0 / 1.0 的入口说明，但没有办法在本机真实打开目标阿里云 Workbench 去逐像素确认当前账号界面。</li>
+      <li><strong>大文件下载兜底：</strong>文档已提到 <code>scp/sftp/rsync/OSS</code> 作为大包兜底，但没有把这些兜底方案展开成完整操作手册。若后续面向真实大包交付，建议再补一页“Workbench 下载失败的替代流程”。</li>
       <li><strong>迁移 kit 不是 git repo：</strong><code>C:\Users\bloom\wailearning-migration-kit</code> 当前没有 <code>.git</code>，所以这边虽然有最新截图、报告、和我新增的检查脚本/文档更新，但没有同步到远端仓库。若后续任务要求“远端也同步”，需要先确认这部分对应哪个 repo。</li>
       <li><strong>migration-kit 旧文档仍有超框：</strong>我只保证了旧系统交付目录本身不超框。<code>wailearning-migration-kit/docs</code> 里其他历史文档，用同一个扫描器检查时，移动端仍有多页超框。这不影响旧系统交付包本身，但如果后续还要把 migration-kit 也交给人读，需要继续整理。</li>
       <li><strong>本地 PostgreSQL 启动方式比较脆：</strong>闭环验证依赖一个 Windows 下的 PostgreSQL workaround。直接跑 <code>local_validation_rehearsal.py</code> 时，如果 5432 没有 postgres 先起来，会失败；我这轮是先手工起 postgres，再跑 rehearsal。后续模型如果要重复验证，应该先检查本地 postgres 是否已监听 <code>127.0.0.1:5432</code>。</li>

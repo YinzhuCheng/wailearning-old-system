@@ -85,7 +85,7 @@
     <ul>
       <li>代码流只负责在旧服务器上生成迁移包和 <code>.sha256</code>；它不会自动把文件写到你的 Windows 电脑。</li>
       <li><code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code> 里的“下载脚本”，指的是旧服务器从 GitHub 下载导出脚本，不是自动下载迁移包到 Windows。</li>
-      <li>从旧服务器到 Windows 这一步，需要用 Workbench 文件管理器手工下载，或在 Windows 上另行使用 <code>scp/sftp</code>、OSS 等方式取回文件。</li>
+      <li>从旧服务器到 Windows 这一步，需要用 Workbench 文件管理器手工下载，或在 Windows 上另行使用 <code>scp/sftp/rsync</code>、OSS 等方式取回文件。</li>
     </ul>
   </div>
 
@@ -96,12 +96,27 @@
     这里的 <code>/root/wailearning-migration</code> 是默认导出目录。若脚本输出了不同路径，或你改过 <code>OUT_DIR</code>，以后都以脚本最后打印出来的实际路径为准。
   </div>
 
+  <h2>阿里云官方依据</h2>
+  <ul>
+    <li>
+      官方文档：
+      <a href="https://help.aliyun.com/zh/ecs/user-guide/manage-files">通过Workbench上传下载或管理ECS上的文件</a>。
+      这页说明 Workbench 可以在浏览器里管理 ECS 文件，文件管理功能只支持通过 Workbench <strong>终端连接</strong>登录；如果用会话管理（SSM）连接，因为没有文件传输通道，所以不能用这个下载入口。
+    </li>
+    <li>
+      备选方案文档：
+      <a href="https://help.aliyun.com/zh/ecs/user-guide/use-sftp-to-upload-files-to-a-linux-instance">通过sftp/scp/rsync向Linux实例传输文件</a>。
+      如果 Workbench 下载失败、文件太大或需要断点续传，可以从 Windows 本机侧改用 <code>scp</code>、<code>sftp</code> 或 <code>rsync</code> 拉取文件。
+    </li>
+  </ul>
+
   <h2>最稳的下载方式</h2>
   <ol>
     <li>在 Workbench 里确认自己用的是<strong>终端连接</strong>，不是<strong>会话管理</strong>连接（会话管理通常没有文件管理/下载入口）。</li>
-    <li>在 Workbench 打开文件管理器（不同版本入口可能不同；如果你看不到顶部菜单，可在终端区域右键尝试显示菜单栏）。</li>
+    <li>如果是 Workbench 2.0，在左侧菜单栏点击文件管理图标，进入文件管理页面。</li>
+    <li>如果是 Workbench 1.0，在顶部菜单栏选择“文件” -> “打开新文件树”。如果你看不到顶部菜单，可在终端区域右键尝试显示菜单栏。</li>
     <li>在文件树里找到导出目录，通常是 <code>/root/wailearning-migration</code>。</li>
-    <li>对这两个文件分别执行“下载”（右键文件 -> 下载）：<code>.tar.gz</code> 和 <code>.sha256</code>。</li>
+    <li>对这两个文件分别执行“下载”：<code>.tar.gz</code> 和 <code>.sha256</code>。Workbench 2.0 可以在右侧文件操作里点“下载”，也可以在左侧文件树右键下载；Workbench 1.0 通常是在文件树中右键文件并选择“下载文件”。</li>
     <li>把它们放到 Windows 的一个短路径目录里，例如 <code>C:\Users\you\Downloads\wailearning\</code>。这里的 <code>you</code> 只是示例，换成你当前 Windows 用户名或你实际保存的位置。</li>
     <li>运行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> 做本地校验。</li>
   </ol>
@@ -119,7 +134,7 @@
   <h2>下载失败怎么办</h2>
   <ul>
     <li><strong>没有文件管理入口：</strong>通常是用了会话管理连接，或菜单栏被隐藏。优先改用 Workbench 的“终端连接”重连；其次在终端区域右键切换“显示/隐藏菜单栏”。</li>
-    <li><strong>文件太大/下载很慢：</strong>改用 <code>scp/sftp</code>、或上传到对象存储（OSS）再下载。更详细的兜底方案见 <a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>。</li>
+    <li><strong>文件太大/下载很慢：</strong>改用 <code>scp/sftp/rsync</code> 从 Windows 本机拉取，或上传到对象存储（OSS）再下载。更详细的兜底方案见 <a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>。</li>
     <li><strong>权限不足：</strong>请确认是 <code>root</code> 用户，至少能读取导出目录。</li>
   </ul>
 
