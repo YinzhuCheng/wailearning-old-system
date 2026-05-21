@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>交接说明：给下一位校验模型</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --ink: #0f172a;
+      --muted: #334155;
+      --line: #e2e8f0;
+      --accent: #155eef;
+      --note: #eef4ff;
+      --warn: #fff6de;
+    }
+    * { box-sizing: border-box; }
+    html, body { max-width: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.75 "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 26px 14px 64px;
+    }
+    h1, h2 { line-height: 1.25; margin: 0 0 10px; }
+    h1 { font-size: 28px; letter-spacing: 0.2px; }
+    h2 { margin-top: 22px; font-size: 18px; }
+    p, li { color: var(--muted); }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    a:hover { text-decoration: underline; }
+    code, pre {
+      font-family: Consolas, "SFMono-Regular", monospace;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    code {
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #1e293b;
+      white-space: normal;
+    }
+    pre {
+      margin: 10px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #0b1220;
+      background: #0b1220;
+      color: #f8fafc;
+      white-space: pre-wrap;
+    }
+    .callout {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--line);
+      background: #fff;
+    }
+    .callout.note { border-left-color: var(--accent); background: var(--note); }
+    .callout.warn { border-left-color: #d97706; background: var(--warn); }
+    ul, ol { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 6px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>交接说明：给下一位校验模型</h1>
+  <p>
+    这份文档只服务于后续接手校验的模型或工程师。它不面向旧系统导出执行者。
+    目标是快速说明：这轮已经完成了什么，还剩下哪些需要继续怀疑、继续复核。
+  </p>
+
+  <div class="callout note">
+    <strong>当前交付主目录：</strong><code>C:\Users\bloom\.agent-run\wailearning-old-system-push\standalone-old-export-kit</code><br>
+    <strong>最近一次已 push 的旧仓远端：</strong><code>https://github.com/YinzhuCheng/wailearning-old-system.git</code><br>
+    <strong>最近一次已 push 提交：</strong><code>aab680a</code><br>
+    <strong>本地当前状态：</strong>已新增本交接文档提交，当前本地领先远端 1 个提交；具体哈希以 <code>git log -1 --oneline</code> 为准。
+  </div>
+
+  <h2>本轮已完成</h2>
+  <ol>
+    <li>重做了旧系统导出工具包的入口文档结构，入口收口到 <code>index.html</code> 和 <code>exporter-pack/00_START_HERE_EXPORTER.html</code>。</li>
+    <li>把“导出到 Windows”正式并入主流程，不再把它写成隐含步骤或可选补充。</li>
+    <li>删除了容易误导执行者的旧 root 级 txt 入口文件，只保留 <code>exporter-pack</code> 下的新入口与脚本。</li>
+    <li>把所有交付 HTML 改成单列、纯文本导向、强制换行样式，避免复杂卡片、流程图、网格布局导致超框。</li>
+    <li>补了针对 Workbench 常见坑的文案：长命令换行、终端连接 vs 会话管理、看不到下载入口、包太大下载慢等。</li>
+    <li>补了协调人视角文档和 LLM 排障文档，明确“出错时最少该给什么文件和输出”。</li>
+    <li>对交付目录里的全部 HTML 做了自动化横向溢出扫描，当前结果是 0 超框。</li>
+    <li>复跑了本地闭环验证：旧系统伪数据、迁移适配、新系统启动、Playwright 真实截图，已成功生成新一轮截图。</li>
+    <li>把旧仓文档修复提交并 push 到远端，多次提交后远端最新为 <code>aab680a</code>；随后新增本交接文档提交，本地当前领先远端 1 个提交。</li>
+  </ol>
+
+  <h2>本轮关键产物</h2>
+  <ul>
+    <li>导出执行者主入口：<code>exporter-pack/00_START_HERE_EXPORTER.html</code></li>
+    <li>协调人入口：<code>exporter-pack/10_COORDINATOR_NOTES.html</code></li>
+    <li>下载到 Windows 说明：<code>exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</code></li>
+    <li>LLM 排障页：<code>exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html</code></li>
+    <li>直接粘贴版：<code>exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt</code></li>
+    <li>脚本下载版：<code>exporter-pack/02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code></li>
+    <li>旧系统真实截图与新系统真实截图：<code>C:\Users\bloom\wailearning-migration-kit\reports\screenshots\</code></li>
+    <li>最近一次本地验证报告：<code>C:\Users\bloom\wailearning-migration-kit\reports\data\local-validation-report.json</code></li>
+  </ul>
+
+  <h2>本轮验证结论</h2>
+  <ul>
+    <li>旧系统交付目录下的 6 个 HTML 当前都通过了本地超框检查。</li>
+    <li>最近一次本地闭环验证完成时间是 <code>2026-05-21T17:03:29</code>。</li>
+    <li>旧系统截图与新系统截图都是真实页面截图，不是文档截图。</li>
+    <li>交付目录当前没有额外 scratch、report、overflow、screenshot 之类的中间产物。</li>
+    <li>旧系统交付目录本地 git 状态在写本文档前是 clean；写入本文档后，如果你看到未提交变更，只应当是这份交接文档本身。</li>
+  </ul>
+
+  <div class="callout warn">
+    <strong>我仍然担心的点：</strong>
+    <ul>
+      <li><strong>Workbench 界面差异：</strong>我已经把文档写得更“版本兼容”，但没有办法在本机真实打开阿里云 Workbench 去逐像素确认入口文案和菜单位置。后续模型应继续从“人类执行视角”审一次下载说明是否足够稳。</li>
+      <li><strong>大文件下载兜底：</strong>文档已提到 <code>scp/sftp/OSS</code> 作为大包兜底，但没有把这些兜底方案展开成完整操作手册。若后续面向真实大包交付，建议再补一页“Workbench 下载失败的替代流程”。</li>
+      <li><strong>迁移 kit 不是 git repo：</strong><code>C:\Users\bloom\wailearning-migration-kit</code> 当前没有 <code>.git</code>，所以这边虽然有最新截图、报告、和我新增的检查脚本/文档更新，但没有同步到远端仓库。若后续任务要求“远端也同步”，需要先确认这部分对应哪个 repo。</li>
+      <li><strong>migration-kit 旧文档仍有超框：</strong>我只保证了旧系统交付目录本身不超框。<code>wailearning-migration-kit/docs</code> 里其他历史文档，用同一个扫描器检查时，移动端仍有多页超框。这不影响旧系统交付包本身，但如果后续还要把 migration-kit 也交给人读，需要继续整理。</li>
+      <li><strong>本地 PostgreSQL 启动方式比较脆：</strong>闭环验证依赖一个 Windows 下的 PostgreSQL workaround。直接跑 <code>local_validation_rehearsal.py</code> 时，如果 5432 没有 postgres 先起来，会失败；我这轮是先手工起 postgres，再跑 rehearsal。后续模型如果要重复验证，应该先检查本地 postgres 是否已监听 <code>127.0.0.1:5432</code>。</li>
+      <li><strong>旧系统“导出到 Windows”的步骤仍然没有真实远端环境实测：</strong>本轮验证重心是本地闭环迁移和文档鲁棒性，不是真实阿里云远端导出下载演练。也就是说，“文档逻辑是正确的”与“真实目标服务器上 100% 无环境偏差”之间，仍然有最后一层落地风险。</li>
+    </ul>
+  </div>
+
+  <h2>建议下一位模型优先复核什么</h2>
+  <ol>
+    <li>从旧系统维护者视角，只读 <code>index.html</code> 和 <code>exporter-pack/00_START_HERE_EXPORTER.html</code>，判断是否还存在重复、废话、或执行顺序不够直接的地方。</li>
+    <li>重点复核 <code>20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</code>，确认它对 Workbench 不同版本/不同连接方式的表述是否足够稳妥。</li>
+    <li>如果你需要继续做“远端也同步”，先确认 <code>wailearning-migration-kit</code> 对应哪个 git 仓库；否则不要假设它能直接 push。</li>
+    <li>如果你要继续复跑本地验证，先确保 PostgreSQL 已启动，再运行 <code>C:\Users\bloom\wailearning-migration-kit\runners\local_validation_rehearsal.py</code>。</li>
+    <li>如果你要继续做人类可读迁移资料，下一步应处理 <code>wailearning-migration-kit/docs</code> 里的移动端超框问题，而不是回头再改旧系统交付目录。</li>
+  </ol>
+
+  <h2>我给下一位模型的直白结论</h2>
+  <p>
+    旧系统交付包本身现在已经到“可以交给维护者”的状态：入口清楚、导出到 Windows 已整合进主流程、HTML 已做无超框处理、旧/新系统真实截图也已经产出。
+    但如果你要把整个迁移资料体系一起交付，就不能只看这个目录；你还得继续处理 <code>wailearning-migration-kit</code> 那边的历史文档、远端归属、以及更完整的大文件下载兜底方案。
+  </p>
+</main>
+</body>
+</html>
