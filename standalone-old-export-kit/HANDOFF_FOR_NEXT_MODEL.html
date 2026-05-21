@@ -94,7 +94,7 @@
     <li>删除了容易误导执行者的旧 root 级 txt 入口文件，只保留 <code>exporter-pack</code> 下的新入口与脚本。</li>
     <li>把所有交付 HTML 改成单列、纯文本导向、强制换行样式，避免复杂卡片、流程图、网格布局导致超框。</li>
     <li>补了针对 Workbench 常见坑的文案：长命令换行、终端连接 vs 会话管理、看不到下载入口、包太大下载慢等。</li>
-    <li>补了协调人视角文档和 LLM 排障文档，明确“出错时最少该给什么文件和输出”。</li>
+    <li>补了面向编码Agents调试指令的文档和 LLM 排障文档，明确“出错时最少该给什么文件和输出”。</li>
     <li>对交付目录里的全部 HTML 做了自动化横向溢出扫描，当前结果是 0 超框。</li>
     <li>复跑了本地闭环验证：旧系统伪数据、迁移适配、新系统启动、Playwright 真实截图，已成功生成新一轮截图。</li>
     <li>把旧仓文档修复提交并 push 到远端，多次提交后远端最新为 <code>aab680a</code>；随后新增本交接文档提交，本地当前领先远端 1 个提交。</li>
@@ -103,7 +103,7 @@
   <h2>本轮关键产物</h2>
   <ul>
     <li>导出执行者主入口：<code>exporter-pack/00_START_HERE_EXPORTER.html</code></li>
-    <li>协调人入口：<code>exporter-pack/10_COORDINATOR_NOTES.html</code></li>
+    <li>编码Agents调试指令入口：<code>exporter-pack/10_COORDINATOR_NOTES.html</code></li>
     <li>下载到 Windows 说明：<code>exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</code></li>
     <li>LLM 排障页：<code>exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html</code></li>
     <li>直接粘贴版：<code>exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt</code></li>

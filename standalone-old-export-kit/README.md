@@ -10,7 +10,7 @@
 ## 你先看什么
 
 - 导出执行者先看 `exporter-pack/00_START_HERE_EXPORTER.html`
-- 协调人先看 `exporter-pack/10_COORDINATOR_NOTES.html`
+- 需要让编码Agents协助调试导出过程时，先看 `exporter-pack/10_COORDINATOR_NOTES.html`
 - 出错时先看 `exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html`
 
 ## 这个包里有什么
@@ -21,7 +21,7 @@
 - `04_verify_export_bundle.sh`：旧服务器导出后校验包完整性。
 - `05_windows_verify_bundle.ps1`：Windows 本地校验下载包。
 - `06_post_import_verify.sh`：新系统导入后的数据与附件对账。
-- `10_COORDINATOR_NOTES.html`：给协调人看的简版说明。
+- `10_COORDINATOR_NOTES.html`：如何向编码Agents发指令调试导出过程的问题。
 - `20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html`：只讲下载到 Windows。
 - `90_DEEP_TROUBLESHOOTING_FOR_LLM.html`：给 LLM 的复杂排障说明。
 
