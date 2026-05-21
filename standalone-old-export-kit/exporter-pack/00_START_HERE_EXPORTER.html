@@ -97,10 +97,36 @@
     <li>校验通过后，再把包交给迁移接手者。</li>
   </ol>
 
+  <h2>导出后文件在哪里</h2>
+  <div class="callout note">
+    <strong>默认导出目录：</strong><code>/root/wailearning-migration</code><br>
+    <strong>迁移包文件名：</strong><code>old-to-new-YYYYMMDDHHMMSS.tar.gz</code><br>
+    <strong>可选哈希文件：</strong><code>old-to-new-YYYYMMDDHHMMSS.tar.gz.sha256</code>
+  </div>
+  <p>
+    脚本结束时会在 Workbench 终端里打印实际路径，例如
+    <code>/root/wailearning-migration/old-to-new-20260521120000.tar.gz</code>。
+    后续旧服务器校验、Workbench 文件管理器下载、Windows 本地校验，都以终端最后打印的实际路径和文件名为准。
+  </p>
+  <p>
+    如果你没看清脚本最后输出，可以在 Workbench 终端里运行下面这条命令找最新迁移包：
+  </p>
+  <pre><code>ls -lh /root/wailearning-migration/old-to-new-*.tar.gz</code></pre>
+
+  <h2>旧服务器校验怎么做</h2>
+  <p>
+    导出脚本结束后，Workbench 终端会打印一条可以直接复制的校验命令，通常长这样：
+  </p>
+  <pre><code>bash /tmp/verify_export_bundle.sh /root/wailearning-migration/old-to-new-20260521120000.tar.gz</code></pre>
+  <p>
+    你不需要自己猜脚本放在哪里。优先复制终端最后给出的 <code>bash ... old-to-new-....tar.gz</code> 命令；
+    如果命令里的时间戳不同，用你终端实际看到的那一条。
+  </p>
+
   <div class="callout warn">
     <strong>关键提醒：</strong>“导出完成”只表示旧服务器生成包，不表示文件已经到 Windows。
     “下载到 Windows + Windows 本地校验”是主流程的一部分。
-    代码流不会自动把迁移包下载到 Windows；需要通过 Workbench 文件管理器，或在 Windows 上另行使用 <code>scp/sftp/rsync</code>、OSS 等方式取回文件。
+    不懂 SSH 也没关系，默认按 Workbench 文件管理器下载即可；<code>scp/sftp/rsync</code>、OSS 只是 Workbench 下载失败或大文件很慢时的备选方案。
   </div>
 
   <h2>下载到 Windows 的说明</h2>

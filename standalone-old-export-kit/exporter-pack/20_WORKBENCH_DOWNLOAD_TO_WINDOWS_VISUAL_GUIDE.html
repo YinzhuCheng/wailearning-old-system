@@ -96,6 +96,12 @@
     这里的 <code>.tar.gz</code> 是必须下载的迁移包；<code>.sha256</code> 是可选哈希校验文件。<code>/root/wailearning-migration</code> 是默认导出目录。若脚本输出了不同路径，或你改过 <code>OUT_DIR</code>，以后都以脚本最后打印出来的实际路径为准。
   </div>
 
+  <div class="callout note">
+    <strong>如果你忘了文件名：</strong>回到 Workbench 终端运行下面命令，找时间最新的 <code>.tar.gz</code>：
+    <pre><code>ls -lh /root/wailearning-migration/old-to-new-*.tar.gz</code></pre>
+    看到的完整路径就是文件管理器里要找的路径。
+  </div>
+
   <h2>阿里云官方依据</h2>
   <ul>
     <li>
@@ -118,7 +124,7 @@
     <li>在文件树里找到导出目录，通常是 <code>/root/wailearning-migration</code>。</li>
     <li>对 <code>.tar.gz</code> 执行“下载”。Workbench 2.0 可以在右侧文件操作里点“下载”，也可以在左侧文件树右键下载；Workbench 1.0 通常是在文件树中右键文件并选择“下载文件”。</li>
     <li>可选：如果你想做哈希校验，再用同样方式下载同名 <code>.sha256</code> 文件。</li>
-    <li>把它们放到 Windows 的一个短路径目录里，例如 <code>C:\Users\you\Downloads\wailearning\</code>。这里的 <code>you</code> 只是示例，换成你当前 Windows 用户名或你实际保存的位置。</li>
+    <li>把下载到的文件放到 Windows 的一个短路径目录里，例如 <code>C:\Users\you\Downloads\wailearning\</code>。这里的 <code>you</code> 只是示例，换成你当前 Windows 用户名或你实际保存的位置。</li>
     <li>按下面“Windows 本地校验怎么运行”执行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a>。</li>
   </ol>
 
