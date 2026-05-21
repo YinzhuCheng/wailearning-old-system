@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>旧系统独立导出说明</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #5c6b82;
+      --line: #dce4ef;
+      --panel: #f7f9fc;
+      --accent: #155eef;
+      --warn: #8a5700;
+      --warn-bg: #fff5d6;
+      --ok-bg: #edf9f0;
+    }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #ffffff;
+      font: 16px/1.65 "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 24px 72px;
+    }
+    h1, h2, h3 {
+      line-height: 1.25;
+      margin: 0 0 14px;
+    }
+    h1 { font-size: 32px; }
+    h2 {
+      margin-top: 34px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      font-size: 24px;
+    }
+    h3 {
+      margin-top: 22px;
+      font-size: 18px;
+    }
+    p, li, td {
+      color: var(--muted);
+    }
+    code, pre {
+      font-family: Consolas, "SFMono-Regular", monospace;
+    }
+    code {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: #eef2f8;
+      color: #21304d;
+    }
+    pre {
+      overflow-x: auto;
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: #101828;
+      color: #f5f7fb;
+      line-height: 1.5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+    }
+    th, td {
+      vertical-align: top;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+    }
+    th {
+      color: var(--ink);
+      background: var(--panel);
+    }
+    .note {
+      border-left: 4px solid var(--accent);
+      background: var(--panel);
+      padding: 12px 14px;
+      border-radius: 8px;
+    }
+    .warn {
+      border-left: 4px solid var(--warn);
+      background: var(--warn-bg);
+      padding: 12px 14px;
+      border-radius: 8px;
+    }
+    .ok {
+      background: var(--ok-bg);
+      padding: 12px 14px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>旧系统独立导出说明</h1>
+
+  <p class="note">
+    本工具包用于从旧系统服务器导出迁移包，不要求旧系统仓库更新。
+    只要可以在阿里云 Workbench 以 root 登录旧服务器，通常就可以执行。
+  </p>
+
+  <h2>优先使用哪一个文件</h2>
+
+  <table>
+    <tr>
+      <th>文件</th>
+      <th>用途</th>
+    </tr>
+    <tr>
+      <td><code>01_WORKBENCH_COPY_PASTE_EXPORT.txt</code></td>
+      <td>
+        首选。完整复制粘贴即可执行，不依赖旧系统仓库，也不依赖下载脚本。
+      </td>
+    </tr>
+    <tr>
+      <td><code>02_WORKBENCH_DOWNLOAD_SCRIPT_EXPORT.txt</code></td>
+      <td>
+        脚本版。会从公开 GitHub 仓库下载
+        <code>scripts/standalone_old_export.sh</code> 后执行。
+      </td>
+    </tr>
+    <tr>
+      <td><code>scripts/standalone_old_export.sh</code></td>
+      <td>
+        真正的导出脚本。可以手动上传到服务器后执行。
+      </td>
+    </tr>
+  </table>
+
+  <h2>整体迁移思路</h2>
+
+  <ol>
+    <li>在旧系统服务器导出一个 tar.gz 迁移包。</li>
+    <li>迁移包内包含数据库 dump、uploads 附件、旧环境和部署配置快照。</li>
+    <li>把 tar.gz 复制到新系统服务器。</li>
+    <li>新系统用导入脚本恢复数据库，再解压附件到新系统上传目录。</li>
+    <li>新系统 bootstrap 做兼容性补齐，例如新表、新字段和默认数据。</li>
+    <li>最后用页面或接口核对学生、课程、作业、通知、附件是否正常。</li>
+  </ol>
+
+  <h2>为什么不能只导出数据库</h2>
+
+  <p>
+    旧系统不是所有资料都在数据库里。数据库通常保存用户、学生、班级、
+    课程、作业、通知、成绩等结构化数据，也保存附件 URL 和文件名。
+    但用户上传的真实文件通常在服务器文件系统的 <code>uploads</code>
+    目录中。如果只导出数据库，迁移后页面能看到记录，但附件会打不开。
+  </p>
+
+  <p>
+    因此本工具会同时尝试收集：
+  </p>
+
+  <ul>
+    <li><code>UPLOADS_DIR</code> 指向的目录。</li>
+    <li>旧 release 目录下的 <code>uploads</code>。</li>
+    <li>应用根目录或 <code>shared/uploads</code>。</li>
+    <li><code>/opt</code> 和 <code>/root</code> 下名字为 uploads 的目录。</li>
+  </ul>
+
+  <h2>不记得数据库密码怎么办</h2>
+
+  <p>
+    旧系统部署后，数据库连接串通常写在
+    <code>.env.production</code> 或 <code>.env</code> 中。
+    脚本会自动查找这些文件并读取 <code>DATABASE_URL</code>。
+    所以执行者不需要手动输入数据库密码。
+  </p>
+
+  <p class="warn">
+    如果脚本仍提示找不到 <code>DATABASE_URL</code>，说明旧系统部署路径
+    和默认路径不同。可以先在服务器执行
+    <code>find /opt /root -name .env.production 2&gt;/dev/null</code>，
+    找到真实路径后，修改操作流开头的 <code>ENV_FILE</code>。
+  </p>
+
+  <h2>操作步骤</h2>
+
+  <h3>方式一：完整复制粘贴版</h3>
+
+  <ol>
+    <li>打开 <code>01_WORKBENCH_COPY_PASTE_EXPORT.txt</code>。</li>
+    <li>如旧系统路径不是默认值，修改文件顶部的路径变量。</li>
+    <li>全选整个文件，复制到阿里云 Workbench。</li>
+    <li>按回车等待完成。</li>
+  </ol>
+
+  <h3>方式二：下载脚本版</h3>
+
+  <ol>
+    <li>打开 <code>02_WORKBENCH_DOWNLOAD_SCRIPT_EXPORT.txt</code>。</li>
+    <li>全选复制到阿里云 Workbench。</li>
+    <li>Workbench 会从公开 GitHub 下载脚本并执行。</li>
+  </ol>
+
+  <h2>导出包内容</h2>
+
+  <table>
+    <tr>
+      <th>文件</th>
+      <th>说明</th>
+    </tr>
+    <tr>
+      <td><code>old-system.dump</code></td>
+      <td>PostgreSQL 自定义格式备份，用 <code>pg_restore</code> 导入。</td>
+    </tr>
+    <tr>
+      <td><code>old-uploads.tar.gz</code></td>
+      <td>尽量收集到的旧系统 uploads 文件。</td>
+    </tr>
+    <tr>
+      <td><code>old-env-file</code></td>
+      <td>旧环境变量快照，可能包含密码，请只交给可信迁移人员。</td>
+    </tr>
+    <tr>
+      <td><code>upload-roots-included.txt</code></td>
+      <td>脚本实际扫描并收集到的附件目录。</td>
+    </tr>
+    <tr>
+      <td><code>attachment-references.tsv</code></td>
+      <td>数据库内附件引用清单，用于核对是否有文件遗漏。</td>
+    </tr>
+    <tr>
+      <td><code>db-table-counts.tsv</code></td>
+      <td>导出时的旧库表统计，用于迁移后粗略对账。</td>
+    </tr>
+    <tr>
+      <td><code>systemd/</code>、<code>nginx/</code></td>
+      <td>旧部署配置快照，用于排查旧系统路径和反代规则。</td>
+    </tr>
+  </table>
+
+  <h2>导入对接要点</h2>
+
+  <ul>
+    <li>新系统导入时先备份新数据库，避免误覆盖。</li>
+    <li>用 <code>pg_restore</code> 恢复 <code>old-system.dump</code>。</li>
+    <li>把 <code>old-uploads.tar.gz</code> 解压到新系统 uploads 的父目录。</li>
+    <li>导入后运行新系统 bootstrap，让新字段、新表和默认数据补齐。</li>
+    <li>核对 <code>db-table-counts.tsv</code> 和新库表数量，重点看主业务表。</li>
+    <li>用 <code>attachment-references.tsv</code> 检查附件 URL 对应文件是否存在。</li>
+  </ul>
+
+  <h2>常见失败与处理</h2>
+
+  <table>
+    <tr>
+      <th>现象</th>
+      <th>处理</th>
+    </tr>
+    <tr>
+      <td>提示不是 root 用户</td>
+      <td>Workbench 重新用 root 登录，或先切换到 root。</td>
+    </tr>
+    <tr>
+      <td>找不到 <code>DATABASE_URL</code></td>
+      <td>确认 <code>ENV_FILE</code> 指向真实的旧系统 env 文件。</td>
+    </tr>
+    <tr>
+      <td><code>pg_dump</code> 不存在</td>
+      <td>脚本会尝试安装 PostgreSQL client。若失败，先修复系统源。</td>
+    </tr>
+    <tr>
+      <td>导出包里附件为空</td>
+      <td>
+        看 <code>upload-roots-included.txt</code>。
+        如果旧系统有自定义上传目录，把它填入 <code>EXTRA_UPLOAD_DIRS</code>。
+      </td>
+    </tr>
+    <tr>
+      <td>复制粘贴后命令被截断</td>
+      <td>
+        使用完整复制粘贴版，不要只复制中间一段。
+        本工具包已控制长行，避免路径被折成两段。
+      </td>
+    </tr>
+  </table>
+
+  <h2>给 LLM 排错时要提供什么</h2>
+
+  <p>
+    如果导出不能一次成功，把以下材料一起给 LLM：
+  </p>
+
+  <ul>
+    <li><code>01_WORKBENCH_COPY_PASTE_EXPORT.txt</code> 或你实际执行的操作流。</li>
+    <li>Workbench 最后 200 行报错。</li>
+    <li>本说明 HTML。</li>
+    <li>如果已生成迁移包，提供其中的 <code>manifest.txt</code>。</li>
+    <li>如果附件异常，提供 <code>upload-roots-included.txt</code>。</li>
+  </ul>
+
+  <h2>成功输出示例</h2>
+
+  <pre><code>导出完成。
+迁移包：/root/wailearning-migration/old-to-new-20260521120000.tar.gz
+请把这个 tar.gz 复制到新系统服务器后执行导入。</code></pre>
+
+  <p class="ok">
+    看到上述输出后，旧系统导出阶段完成。后续工作是把 tar.gz 迁移包
+    复制到新系统服务器，并执行新系统导入流程。
+  </p>
+</main>
+</body>
+</html>

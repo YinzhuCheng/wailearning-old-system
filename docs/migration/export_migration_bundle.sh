@@ -23,6 +23,7 @@ load_env_file() {
   fi
   while IFS= read -r line || [ -n "${line}" ]; do
     line="${line%$'\r'}"
+    line="${line#$'\ufeff'}"
     [[ -z "${line}" || "${line}" == \#* || "${line}" != *=* ]] && continue
     key="${line%%=*}"
     value="${line#*=}"
@@ -135,7 +136,7 @@ ORDER BY id" >> "${WORK_DIR}/attachment-references.tsv" || true
 }
 
 echo "导出 PostgreSQL 数据库。"
-pg_dump -Fc "${DATABASE_URL}" -f "${WORK_DIR}/old-system.dump"
+pg_dump -Fc -f "${WORK_DIR}/old-system.dump" "${DATABASE_URL}"
 
 echo "收集并打包上传附件目录。"
 UPLOADS_STAGE="${WORK_DIR}/uploads-stage/uploads"
