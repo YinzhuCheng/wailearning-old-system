@@ -1,5 +1,10 @@
 # wailearning migration kit
 
+优先入口：
+
+- `index.html`
+- `exporter-pack/00_START_HERE_EXPORTER.html`
+
 旧系统独立导出工具包。
 
 这个工具包不要求旧系统仓库更新。旧系统维护者只要能在阿里云 Workbench

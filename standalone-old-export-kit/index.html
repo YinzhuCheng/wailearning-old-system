@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>旧系统导出工具包入口</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #162033;
+      --muted: #56657c;
+      --line: #dae4ef;
+      --accent: #155eef;
+      --accent-soft: #eef4ff;
+      --warn-bg: #fff4dd;
+      --ok-bg: #edf9f1;
+      --shadow: 0 16px 40px rgba(20, 34, 53, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(21, 94, 239, 0.08), transparent 28%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--ink);
+      font: 16px/1.68 "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 34px 20px 72px;
+    }
+    h1, h2, h3 { line-height: 1.2; margin: 0 0 14px; }
+    h1 { font-size: 36px; }
+    h2 { margin-top: 34px; font-size: 24px; }
+    h3 { margin-top: 22px; font-size: 19px; }
+    p, li, td { color: var(--muted); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, pre {
+      font-family: Consolas, "SFMono-Regular", monospace;
+    }
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #eef3fb;
+      color: #21304c;
+    }
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #101828;
+      color: #f4f7fd;
+    }
+    .hero, .card, .warn, .ok {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 20px 20px 18px;
+      margin-top: 18px;
+    }
+    .warn { background: var(--warn-bg); }
+    .ok { background: var(--ok-bg); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .triptych {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .pick {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid #e1eaf6;
+      background: #f8fbff;
+    }
+    .pick strong {
+      display: inline-block;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      background: var(--card);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f6f9fe;
+      color: var(--ink);
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin-top: 6px;
+    }
+    .small { font-size: 14px; }
+    .list-tight li { margin: 6px 0; }
+    @media (max-width: 920px) {
+      .grid, .triptych { grid-template-columns: 1fr; }
+      h1 { font-size: 30px; }
+      main { padding: 24px 14px 60px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <h1>旧系统独立导出工具包入口</h1>
+    <p>
+      这是整个 <code>standalone-old-export-kit</code> 的总入口。
+      你不需要自己判断先看哪份文档、先用哪个代码流、出错后应该给 LLM 哪些材料。
+      这个页面已经按角色、偏好和风险，帮你把顺序排好了。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>一眼选版本</h2>
+    <div class="triptych">
+      <div class="pick">
+        <strong>我只想稳妥导出，不想研究细节</strong>
+        <p>
+          先打开：
+          <a href="./exporter-pack/00_START_HERE_EXPORTER.html">exporter-pack/00_START_HERE_EXPORTER.html</a>
+        </p>
+        <p>
+          首选代码流：
+          <a href="./exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a>
+        </p>
+        <p class="small">
+          这是最稳的版本。整段复制到 Workbench，最不依赖 GitHub 和执行者个人判断。
+        </p>
+      </div>
+
+      <div class="pick">
+        <strong>我会重复导出，希望每次都拉最新脚本</strong>
+        <p>
+          先打开：
+          <a href="./exporter-pack/00_START_HERE_EXPORTER.html">exporter-pack/00_START_HERE_EXPORTER.html</a>
+        </p>
+        <p>
+          使用代码流：
+          <a href="./exporter-pack/02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a>
+        </p>
+        <p class="small">
+          适合后续复用，但要求旧服务器能访问 GitHub raw。
+        </p>
+      </div>
+
+      <div class="pick">
+        <strong>我是协调人 / 排障人 / 要喂给 LLM</strong>
+        <p>
+          协调人先看：
+          <a href="./exporter-pack/10_COORDINATOR_NOTES.html">10_COORDINATOR_NOTES.html</a>
+        </p>
+        <p>
+          排障人或 LLM 看：
+          <a href="./exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>
+        </p>
+        <p class="small">
+          这里会讲清楚版本兼容、Workbench 坑、Windows 下载、以及要给 LLM 哪些代码与日志。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>完整主流程</h2>
+    <svg viewBox="0 0 1100 300" aria-label="主流程图">
+      <rect x="20" y="38" width="170" height="92" rx="22" fill="#fff" stroke="#dae4ef" stroke-width="2"/>
+      <text x="105" y="74" text-anchor="middle" font-size="24" fill="#162033" font-family="Microsoft YaHei">1. 选文档版本</text>
+      <text x="105" y="102" text-anchor="middle" font-size="17" fill="#56657c" font-family="Microsoft YaHei">按角色 / 偏好进入</text>
+
+      <rect x="226" y="38" width="170" height="92" rx="22" fill="#fff" stroke="#dae4ef" stroke-width="2"/>
+      <text x="311" y="74" text-anchor="middle" font-size="24" fill="#162033" font-family="Microsoft YaHei">2. Workbench 导出</text>
+      <text x="311" y="102" text-anchor="middle" font-size="17" fill="#56657c" font-family="Microsoft YaHei">直接粘贴版 / 脚本版</text>
+
+      <rect x="432" y="38" width="170" height="92" rx="22" fill="#fff" stroke="#dae4ef" stroke-width="2"/>
+      <text x="517" y="74" text-anchor="middle" font-size="24" fill="#162033" font-family="Microsoft YaHei">3. 旧服务器校验</text>
+      <text x="517" y="102" text-anchor="middle" font-size="17" fill="#56657c" font-family="Microsoft YaHei">verify_export_bundle.sh</text>
+
+      <rect x="638" y="38" width="170" height="92" rx="22" fill="#fff" stroke="#dae4ef" stroke-width="2"/>
+      <text x="723" y="74" text-anchor="middle" font-size="24" fill="#162033" font-family="Microsoft YaHei">4. 下载到 Windows</text>
+      <text x="723" y="102" text-anchor="middle" font-size="17" fill="#56657c" font-family="Microsoft YaHei">tar.gz + .sha256</text>
+
+      <rect x="844" y="38" width="170" height="92" rx="22" fill="#eef4ff" stroke="#b8d0ff" stroke-width="2"/>
+      <text x="929" y="74" text-anchor="middle" font-size="24" fill="#155eef" font-family="Microsoft YaHei">5. Windows 校验</text>
+      <text x="929" y="102" text-anchor="middle" font-size="17" fill="#4969a6" font-family="Microsoft YaHei">05_windows_verify_bundle.ps1</text>
+
+      <path d="M190 84 H226" stroke="#90a8d8" stroke-width="6" stroke-linecap="round"/>
+      <path d="M396 84 H432" stroke="#90a8d8" stroke-width="6" stroke-linecap="round"/>
+      <path d="M602 84 H638" stroke="#90a8d8" stroke-width="6" stroke-linecap="round"/>
+      <path d="M808 84 H844" stroke="#90a8d8" stroke-width="6" stroke-linecap="round"/>
+
+      <rect x="210" y="180" width="690" height="76" rx="20" fill="#fff" stroke="#dae4ef" stroke-width="2"/>
+      <text x="555" y="214" text-anchor="middle" font-size="22" fill="#162033" font-family="Microsoft YaHei">出错时不要只给一句报错</text>
+      <text x="555" y="240" text-anchor="middle" font-size="17" fill="#56657c" font-family="Microsoft YaHei">把入口页、所用代码流、主脚本、校验脚本、Workbench 最近 200 行输出，一起给排障者或 LLM</text>
+    </svg>
+  </section>
+
+  <section class="warn">
+    <strong>重要：</strong>
+    “导出完成”不代表文件已经自动到了 Windows。
+    在这套工具包里，下载到 Windows 和 Windows 本地 SHA256 校验，是正式主流程的一部分，不是附加建议。
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <h2>按偏好选哪个代码流</h2>
+      <table>
+        <tr>
+          <th>偏好</th>
+          <th>先开哪个文件</th>
+          <th>原因</th>
+        </tr>
+        <tr>
+          <td>最稳、最少出意外</td>
+          <td><a href="./exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a></td>
+          <td>脚本内嵌，不依赖 GitHub raw；最适合第一次给执行者。</td>
+        </tr>
+        <tr>
+          <td>后续要反复拿最新版脚本</td>
+          <td><a href="./exporter-pack/02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a></td>
+          <td>从 GitHub 拉最新版脚本，适合后续维护和重复执行。</td>
+        </tr>
+        <tr>
+          <td>先看图示再做</td>
+          <td><a href="./exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a></td>
+          <td>专门解释 Workbench 里如何把包带回 Windows。</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>出错时给 LLM 哪些文档和代码</h2>
+      <ul class="list-tight">
+        <li>入口页：<a href="./exporter-pack/00_START_HERE_EXPORTER.html">00_START_HERE_EXPORTER.html</a></li>
+        <li>你实际执行的代码流：<a href="./exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a> 或 <a href="./exporter-pack/02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a></li>
+        <li>主脚本：<a href="./exporter-pack/03_standalone_old_export.sh">03_standalone_old_export.sh</a></li>
+        <li>旧服务器校验脚本：<a href="./exporter-pack/04_verify_export_bundle.sh">04_verify_export_bundle.sh</a></li>
+        <li>如果问题出在 Windows 下载后：<a href="./exporter-pack/05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a></li>
+        <li>复杂版排障说明：<a href="./exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a></li>
+        <li>Workbench 最近 200 行输出</li>
+        <li>若包已生成：包内 <code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code></li>
+      </ul>
+      <div class="ok">
+        <strong>最小原则：</strong>
+        不要只给 LLM 一句 “导出失败了” 或只给最后一行报错。
+        至少把“你选的代码流 + 主脚本 + 最近 200 行终端输出”一起给出去。
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>你现在最该点哪个页面</h2>
+    <table>
+      <tr>
+        <th>你是谁</th>
+        <th>先开</th>
+        <th>再开</th>
+      </tr>
+      <tr>
+        <td>导出执行者</td>
+        <td><a href="./exporter-pack/00_START_HERE_EXPORTER.html">00_START_HERE_EXPORTER.html</a></td>
+        <td><a href="./exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a></td>
+      </tr>
+      <tr>
+        <td>想看下载示意图的人</td>
+        <td><a href="./exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a></td>
+        <td><a href="./exporter-pack/05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a></td>
+      </tr>
+      <tr>
+        <td>协调人</td>
+        <td><a href="./exporter-pack/10_COORDINATOR_NOTES.html">10_COORDINATOR_NOTES.html</a></td>
+        <td><a href="./exporter-pack/00_START_HERE_EXPORTER.html">00_START_HERE_EXPORTER.html</a></td>
+      </tr>
+      <tr>
+        <td>排障者 / LLM</td>
+        <td><a href="./exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a></td>
+        <td><a href="./docs/old_export_guide.html">docs/old_export_guide.html</a></td>
+      </tr>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>工具包内部导航</h2>
+    <ul class="list-tight">
+      <li>执行者整包：<a href="./exporter-pack/00_START_HERE_EXPORTER.html">exporter-pack/00_START_HERE_EXPORTER.html</a></li>
+      <li>下载到 Windows 图示：<a href="./exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a></li>
+      <li>复杂版完整说明：<a href="./docs/old_export_guide.html">docs/old_export_guide.html</a></li>
+      <li>工具包文本说明：<a href="./README.md">README.md</a></li>
+      <li>主脚本目录：<a href="./scripts/standalone_old_export.sh">scripts/standalone_old_export.sh</a>、<a href="./scripts/verify_export_bundle.sh">scripts/verify_export_bundle.sh</a></li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
