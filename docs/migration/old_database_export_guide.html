@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>旧系统数据库与附件导出说明</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #60708a;
+      --line: #d9e2ef;
+      --panel: #f7f9fc;
+      --accent: #165dff;
+      --warn: #9a5b00;
+      --warn-bg: #fff6df;
+      --ok-bg: #eefaf1;
+    }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #ffffff;
+      font: 16px/1.65 "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 24px 72px;
+    }
+    h1, h2, h3 {
+      line-height: 1.25;
+      margin: 0 0 14px;
+    }
+    h1 {
+      font-size: 32px;
+      letter-spacing: -0.02em;
+    }
+    h2 {
+      margin-top: 36px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      font-size: 24px;
+    }
+    h3 {
+      margin-top: 22px;
+      font-size: 18px;
+    }
+    p, li {
+      color: var(--muted);
+    }
+    code, pre {
+      font-family: Consolas, "SFMono-Regular", monospace;
+    }
+    code {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: #eef2f8;
+      color: #21304d;
+    }
+    pre {
+      overflow-x: auto;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #0f172a;
+      color: #e5edf9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--panel);
+      color: var(--ink);
+    }
+    tr:last-child td {
+      border-bottom: 0;
+    }
+    .lead {
+      font-size: 18px;
+      color: #34435c;
+    }
+    .box {
+      margin: 16px 0;
+      padding: 16px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .warn {
+      border-color: #f0ca78;
+      background: var(--warn-bg);
+    }
+    .ok {
+      border-color: #bfe7c8;
+      background: var(--ok-bg);
+    }
+    .checklist li {
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>旧系统数据库与附件导出说明</h1>
+  <p class="lead">
+    本文档配合 <code>ALIYUN_WORKBENCH_OLD_DATABASE_EXPORT_CLEAN.txt</code> 使用。
+    目标是在旧系统服务器上导出一个尽量完整的迁移包，供新系统导入脚本恢复数据库、
+    附件和必要运行上下文。
+  </p>
+
+  <div class="box ok">
+    <strong>核心结论：</strong>
+    如果你能 root 登录旧系统服务器，即使不记得数据库密码，也通常可以导出。
+    因为数据库连接串保存在旧系统部署目录的 <code>.env.production</code> 中，
+    默认路径是 <code>/opt/wailearning-old-system/current/.env.production</code>。
+  </div>
+
+  <h2>整体迁移思路</h2>
+  <ol>
+    <li>旧系统停止或暂停写入，避免导出过程中又产生新作业、附件、通知或成绩。</li>
+    <li>在旧系统服务器执行干净版 Workbench 导出操作流。</li>
+    <li>导出脚本读取旧系统环境文件，使用 <code>pg_dump -Fc</code> 生成 PostgreSQL 自定义格式备份。</li>
+    <li>导出脚本收集上传附件目录，并保存运行配置、服务配置、nginx 配置和 git commit 快照。</li>
+    <li>把生成的 <code>/root/wailearning-migration/&lt;label&gt;.tar.gz</code> 复制到新系统服务器。</li>
+    <li>新系统执行导入脚本：先备份新库，再 <code>pg_restore</code> 旧库，解压附件，最后运行新系统 bootstrap 做兼容性修复。</li>
+    <li>在新系统上用管理员、老师、学生、家长入口做 smoke test，再决定是否切换域名或开放访问。</li>
+  </ol>
+
+  <h2>导出操作流</h2>
+  <p>
+    推荐直接复制仓库文件 <code>docs/migration/ALIYUN_WORKBENCH_OLD_DATABASE_EXPORT_CLEAN.txt</code>
+    到阿里云 Workbench 执行。该文件刻意避免长路径出现在执行命令行里，防止复制粘贴时真实换行
+    把路径切成两段。
+  </p>
+  <p>默认只需要检查这几个变量：</p>
+  <table>
+    <thead>
+      <tr><th>变量</th><th>默认值</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>ENV_FILE</code></td>
+        <td><code>/opt/wailearning-old-system/current/.env.production</code></td>
+        <td>旧系统环境文件。里面应包含 <code>DATABASE_URL</code>，所以不需要你记住数据库密码。</td>
+      </tr>
+      <tr>
+        <td><code>RELEASE_DIR</code></td>
+        <td><code>/opt/wailearning-old-system/current</code></td>
+        <td>旧系统代码目录。用于记录 git commit，也用于推断可能的上传目录。</td>
+      </tr>
+      <tr>
+        <td><code>MIGRATION_OUTPUT_DIR</code></td>
+        <td><code>/root/wailearning-migration</code></td>
+        <td>迁移包输出目录。root 登录时默认可写。</td>
+      </tr>
+      <tr>
+        <td><code>MIGRATION_LABEL</code></td>
+        <td><code>old-to-new-时间戳</code></td>
+        <td>输出文件名的一部分。通常不用改。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>导出包包含什么</h2>
+  <table>
+    <thead>
+      <tr><th>文件</th><th>用途</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>old-system.dump</code></td>
+        <td>旧系统 PostgreSQL 数据库备份，使用 <code>pg_dump -Fc</code> 生成，供新系统 <code>pg_restore</code>。</td>
+      </tr>
+      <tr>
+        <td><code>old-uploads.tar.gz</code></td>
+        <td>
+          旧系统上传附件归档。脚本会尽量收集 <code>UPLOADS_DIR</code>、
+          release 下的 <code>uploads</code>、应用根目录和 shared uploads。
+        </td>
+      </tr>
+      <tr>
+        <td><code>old-env.production</code></td>
+        <td>旧系统环境文件快照。里面可能包含敏感信息，不要公开发给无关人员。</td>
+      </tr>
+      <tr>
+        <td><code>old-systemd.service</code></td>
+        <td>旧后端 systemd 配置快照，帮助排查服务名、端口、工作目录。</td>
+      </tr>
+      <tr>
+        <td><code>old-nginx.conf</code></td>
+        <td>旧 nginx 配置快照，帮助确认路由、域名和静态文件入口。</td>
+      </tr>
+      <tr>
+        <td><code>old-git-commit.txt</code></td>
+        <td>旧系统代码 commit，用于确认迁移来源版本。</td>
+      </tr>
+      <tr>
+        <td><code>upload-roots-included.txt</code></td>
+        <td>实际被收集到的上传目录列表。导入后如果附件缺失，先看这个文件。</td>
+      </tr>
+      <tr>
+        <td><code>attachment-references.tsv</code></td>
+        <td>数据库内作业、提交、资料、通知引用到的附件 URL 清单，用于和实际文件归档比对。</td>
+      </tr>
+      <tr>
+        <td><code>manifest.txt</code></td>
+        <td>导出时间、路径、主要文件名等总清单。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>为什么不只导出数据库</h2>
+  <p>
+    旧系统不是所有资料都在数据库里。数据库里通常只保存附件 URL、附件名称、作业/资料正文、成绩、
+    用户、班级、课程等结构化数据；用户上传的真实文件在服务器文件系统的 uploads 目录下。
+    如果只拿 <code>pg_dump</code>，新系统里会看到附件记录，但点击下载可能 404。
+  </p>
+
+  <h2>常见失败与排查信息</h2>
+  <table>
+    <thead>
+      <tr><th>现象</th><th>优先检查</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>提示找不到 <code>ENV_FILE</code></td>
+        <td>
+          旧系统不是默认部署路径。用下面命令找真实路径，再改操作流顶部变量。
+          <code>find /opt /root -name .env.production 2&gt;/dev/null</code>
+        </td>
+      </tr>
+      <tr>
+        <td>提示环境文件缺少 <code>DATABASE_URL</code></td>
+        <td>
+          说明旧系统不是按当前部署脚本生成，或环境变量在 systemd 里。
+          查看 <code>systemctl cat wailearning-old-system.service</code>。
+        </td>
+      </tr>
+      <tr>
+        <td><code>pg_dump</code> 不存在</td>
+        <td>
+          旧服务器缺少 PostgreSQL client。Ubuntu 可安装 <code>postgresql-client</code>。
+          脚本不会猜测数据库密码，仍从 env 读。
+        </td>
+      </tr>
+      <tr>
+        <td>导出成功但附件缺失</td>
+        <td>
+          查看包内 <code>upload-roots-included.txt</code> 和
+          <code>attachment-references.tsv</code>。如果旧系统曾自定义上传目录，
+          把该目录设为 <code>UPLOADS_DIR</code> 后重跑。
+        </td>
+      </tr>
+      <tr>
+        <td>导入新系统后页面空白或登录后无数据</td>
+        <td>先确认新系统导入脚本是否完成 bootstrap；再查新系统后端日志和数据库计数。不要只看 nginx 首页。</td>
+      </tr>
+      <tr>
+        <td>Workbench 粘贴后命令被截断</td>
+        <td>使用干净版 txt。该版本没有长 raw URL 执行行，也没有手写 heredoc 输入段。</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>导入新系统的对接要点</h2>
+  <ul class="checklist">
+    <li>新系统应先完成基础部署，确认 <code>/api/health</code> 正常。</li>
+    <li>导入前要把迁移包复制到新系统服务器，例如 <code>/root/old-to-new-xxxx.tar.gz</code>。</li>
+    <li>新系统导入脚本会先备份新库，再恢复旧库，再解压附件。</li>
+    <li>导入后新系统 bootstrap 会补新系统缺少的表、字段、默认配置和兼容数据。</li>
+    <li>如果新系统部署时 <code>INIT_DEFAULT_DATA=true</code>，导入后的 bootstrap 可能同时保留旧系统迁移数据并补充新系统演示数据。</li>
+    <li>导入后先用管理员检查学生、课程、作业、资料，再用老师、学生、家长分别登录验证权限和可见数据。</li>
+    <li>域名切换前保留旧系统服务器和迁移包，不要立即销毁旧库。</li>
+  </ul>
+
+  <div class="box warn">
+    <strong>给 LLM 排错时建议一起提供：</strong>
+    Workbench 执行的完整代码流、终端报错最后 200 行、迁移包内 <code>manifest.txt</code>、
+    <code>upload-roots-included.txt</code>、<code>attachment-references.tsv</code>，
+    以及旧系统和新系统的 <code>.env.production</code> 中脱敏后的数据库类型、端口、路径字段。
+    不要直接公开真实数据库密码、API key、SECRET_KEY。
+  </div>
+
+  <h2>成功后你应该看到什么</h2>
+  <p>脚本完成时会输出类似：</p>
+  <pre><code>迁移包导出完成：/root/wailearning-migration/old-to-new-20260521120000.tar.gz
+请把该文件复制到新系统服务器，例如：
+scp /root/wailearning-migration/old-to-new-20260521120000.tar.gz \
+  root@&lt;NEW_ECS_IP&gt;:/root/</code></pre>
+  <p>
+    如果你只是要先备份，不立刻迁移，也可以把这个 tar.gz 下载到本地保存。
+  </p>
+</main>
+</body>
+</html>
