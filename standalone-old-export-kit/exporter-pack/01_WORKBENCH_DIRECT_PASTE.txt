@@ -7,7 +7,7 @@ set -Eeuo pipefail
 # 1. 在阿里云 Workbench 用 root 登录旧系统服务器。
 # 2. 通常不需要改任何内容；如路径特殊，只改下面 5 个变量。
 # 3. 整个文件复制到 Workbench，按回车即可导出 tar.gz 迁移包。
-# 4. 导出完成后，还要把迁移包下载到 Windows，再做本地校验；.sha256 可选用于哈希校验。
+# 4. 导出完成后，还要把迁移包下载到 Windows；Windows 本地校验和 .sha256 哈希校验都是可选检查。
 ###############################################################################
 
 export APP_NAME="wailearning-old-system"
@@ -483,7 +483,7 @@ echo "建议下一步："
 echo "1. 先在旧服务器运行 verify_export_bundle.sh 校验导出包。"
 echo "2. 下载 ${BUNDLE_PATH} 到 Windows。"
 echo "3. 可选：同时下载 ${BUNDLE_SHA256_PATH} 做哈希校验。"
-echo "4. Windows 上运行 05_windows_verify_bundle.ps1 校验后，再上传到新系统服务器导入。"
+echo "4. 可选：Windows 上运行 05_windows_verify_bundle.ps1 校验后，再上传到新系统服务器导入。"
 WAILEARNING_EXPORT_SCRIPT
 
 cat >/tmp/verify_export_bundle.sh <<'WAILEARNING_VERIFY_SCRIPT'
@@ -625,5 +625,5 @@ if [ -n "${LATEST_BUNDLE}" ]; then
   echo "1. ${LATEST_BUNDLE}"
   echo "可选：${LATEST_BUNDLE}.sha256（用于哈希校验）"
   echo
-  echo "Windows 下载后，请用 05_windows_verify_bundle.ps1 校验。"
+  echo "可选：Windows 下载后，可用 05_windows_verify_bundle.ps1 校验。"
 fi

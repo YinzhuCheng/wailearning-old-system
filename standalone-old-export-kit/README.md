@@ -19,7 +19,7 @@
 - `02_WORKBENCH_DOWNLOAD_SCRIPT.txt`：脚本下载版，适合后续复用最新版脚本。
 - `03_standalone_old_export.sh`：真正导出旧系统的脚本。
 - `04_verify_export_bundle.sh`：旧服务器导出后校验包完整性。
-- `05_windows_verify_bundle.ps1`：Windows 本地校验下载包。
+- `05_windows_verify_bundle.ps1`：Windows 本地可选校验下载包。
 - `06_post_import_verify.sh`：新系统导入后的数据与附件对账。
 - `10_COORDINATOR_NOTES.html`：如何向编码Agents发指令调试导出过程的问题。
 - `20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html`：只讲下载到 Windows。
@@ -30,14 +30,15 @@
 1. 在旧服务器用 Workbench 执行 `01_WORKBENCH_DIRECT_PASTE.txt` 或 `02_WORKBENCH_DOWNLOAD_SCRIPT.txt`。
 2. 旧服务器先跑 `04_verify_export_bundle.sh`。
 3. 把 `.tar.gz` 下载到 Windows；`.sha256` 只是可选哈希校验文件。
-4. 在 Windows 上按 `20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html` 里的命令跑 `05_windows_verify_bundle.ps1`，默认只传 `-BundlePath`；如果你也下载了 `.sha256`，再传 `-Sha256File` 做加强校验。
-5. 再把包交给新系统导入流程。
+4. 可选：在 Windows 上按 `20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html` 里的命令跑 `05_windows_verify_bundle.ps1`，默认只传 `-BundlePath`；如果你也下载了 `.sha256`，再传 `-Sha256File` 做加强校验。
+5. 把包交给新系统导入流程。
 6. 导入后跑 `06_post_import_verify.sh`。
 
-## 最低标准
+## 最低标准和建议检查
 
 - 旧服务器导出后能生成迁移包。
-- Windows 本地校验通过。
+- 必须：迁移包已经下载到 Windows。
+- 可选：Windows 本地校验通过。
 - 新系统导入后，核心表计数和附件落盘检查通过。
 
 ## 注意

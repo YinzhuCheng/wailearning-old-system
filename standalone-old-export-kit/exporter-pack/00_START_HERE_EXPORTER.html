@@ -93,8 +93,8 @@
     <li>在旧服务器 Workbench 里执行导出代码流。</li>
     <li>导出后先运行 <a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a> 做旧服务器校验。</li>
     <li>把 <code>.tar.gz</code> 下载到 Windows；<code>.sha256</code> 只是可选哈希校验文件。</li>
-    <li>在 Windows 上按 <a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a> 里的命令运行 <code>05_windows_verify_bundle.ps1</code> 做本地校验。</li>
-    <li>校验通过后，再把包交给迁移接手者。</li>
+    <li>把下载到 Windows 的 <code>.tar.gz</code> 交给迁移接手者。</li>
+    <li>可选：按 <a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a> 里的命令运行 <code>05_windows_verify_bundle.ps1</code> 做 Windows 本地校验。</li>
   </ol>
 
   <h2>导出后文件在哪里</h2>
@@ -106,7 +106,7 @@
   <p>
     脚本结束时会在 Workbench 终端里打印实际路径，例如
     <code>/root/wailearning-migration/old-to-new-20260521120000.tar.gz</code>。
-    后续旧服务器校验、Workbench 文件管理器下载、Windows 本地校验，都以终端最后打印的实际路径和文件名为准。
+    后续旧服务器校验、Workbench 文件管理器下载、Windows 本地可选校验，都以终端最后打印的实际路径和文件名为准。
   </p>
   <p>
     如果你没看清脚本最后输出，可以在 Workbench 终端里运行下面这条命令找最新迁移包：
@@ -125,8 +125,8 @@
 
   <div class="callout warn">
     <strong>关键提醒：</strong>“导出完成”只表示旧服务器生成包，不表示文件已经到 Windows。
-    “下载到 Windows + Windows 本地校验”是主流程的一部分。
-    不懂 SSH 也没关系，默认按 Workbench 文件管理器下载即可；<code>scp/sftp/rsync</code>、OSS 只是 Workbench 下载失败或大文件很慢时的备选方案。
+    “下载到 Windows”是主流程的一部分；Windows 本地校验是可选推荐检查。
+    默认按 Workbench 文件管理器下载即可；<code>scp/sftp/rsync</code>、OSS 只是 Workbench 下载失败或大文件很慢时的备选方案。
   </div>
 
   <h2>下载到 Windows 的说明</h2>
