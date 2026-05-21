@@ -305,6 +305,153 @@
     看到上述输出后，旧系统导出阶段完成。后续工作是把 tar.gz 迁移包
     复制到新系统服务器，并执行新系统导入流程。
   </p>
+
+  <h2>怎样算导出成功</h2>
+
+  <p>
+    最低成功标准是：Workbench 最后输出了“导出完成”，并且给出一个
+    <code>.tar.gz</code> 迁移包路径。默认路径类似：
+  </p>
+
+  <pre><code>/root/wailearning-migration/old-to-new-20260521120000.tar.gz</code></pre>
+
+  <p>
+    如果想进一步确认，可以在旧服务器执行下面命令，把路径替换成真实路径：
+  </p>
+
+  <pre><code>tar -tzf /root/wailearning-migration/old-to-new-20260521120000.tar.gz</code></pre>
+
+  <p>理论上至少应看到这些文件或目录：</p>
+
+  <table>
+    <tr>
+      <th>条目</th>
+      <th>成功含义</th>
+    </tr>
+    <tr>
+      <td><code>old-system.dump</code></td>
+      <td>旧数据库已导出。没有它就不能做数据库迁移。</td>
+    </tr>
+    <tr>
+      <td><code>old-uploads.tar.gz</code></td>
+      <td>旧系统上传附件已打包。即使没有附件，也会有空包。</td>
+    </tr>
+    <tr>
+      <td><code>manifest.txt</code></td>
+      <td>本次导出的基础清单，可用于判断脚本使用了哪些路径。</td>
+    </tr>
+    <tr>
+      <td><code>README.txt</code></td>
+      <td>迁移包内部说明。</td>
+    </tr>
+    <tr>
+      <td><code>runtime.txt</code></td>
+      <td>导出服务器、工具版本和运行环境快照。</td>
+    </tr>
+    <tr>
+      <td><code>db-table-counts.tsv</code></td>
+      <td>旧库表统计。迁移后可以用来粗略对账。</td>
+    </tr>
+    <tr>
+      <td><code>attachment-references.tsv</code></td>
+      <td>数据库内附件引用。可用来排查附件是否遗漏。</td>
+    </tr>
+    <tr>
+      <td><code>upload-roots-included.txt</code></td>
+      <td>脚本实际扫描到并收集的附件目录。</td>
+    </tr>
+    <tr>
+      <td><code>old-env-file</code></td>
+      <td>旧环境变量快照。可能包含密码，应妥善保管。</td>
+    </tr>
+    <tr>
+      <td><code>systemd/</code>、<code>nginx/</code></td>
+      <td>旧部署配置快照。没有也不一定失败，但有助于排错。</td>
+    </tr>
+  </table>
+
+  <h2>成功后建议再做的快速检查</h2>
+
+  <ol>
+    <li>确认迁移包大小不是 0。</li>
+    <li>用 <code>tar -tzf</code> 能列出包内文件。</li>
+    <li>确认包内存在 <code>old-system.dump</code>。</li>
+    <li>打开 <code>upload-roots-included.txt</code> 看是否扫到了真实 uploads。</li>
+    <li>如果旧系统有附件，确认 <code>old-uploads.tar.gz</code> 不是异常小。</li>
+    <li>保留 Workbench 成功输出，后续新系统导入失败时也有用。</li>
+  </ol>
+
+  <h2>失败时给 LLM 哪些材料</h2>
+
+  <p>
+    如果导出失败，不要只贴最后一句错误。把下面材料一起给 LLM，
+    才有希望快速定位真实问题：
+  </p>
+
+  <table>
+    <tr>
+      <th>材料</th>
+      <th>为什么有用</th>
+    </tr>
+    <tr>
+      <td>实际执行的 Workbench 操作流 txt</td>
+      <td>确认是否复制完整、变量是否被改错、路径是否被换行截断。</td>
+    </tr>
+    <tr>
+      <td>Workbench 最后 200 行输出</td>
+      <td>包含真实失败点，例如找不到 env、pg_dump 失败、权限不足。</td>
+    </tr>
+    <tr>
+      <td><code>docs/old_export_guide.html</code></td>
+      <td>让 LLM 理解整体迁移目标、成功标准和包结构。</td>
+    </tr>
+    <tr>
+      <td><code>scripts/standalone_old_export.sh</code></td>
+      <td>这是实际导出逻辑。LLM 可以直接定位脚本行号和兼容性问题。</td>
+    </tr>
+    <tr>
+      <td>旧服务器上的 <code>.env.production</code> 关键行</td>
+      <td>
+        至少给 <code>DATABASE_URL</code>、<code>UPLOADS_DIR</code>。
+        给别人前请确认是否需要打码密码。
+      </td>
+    </tr>
+    <tr>
+      <td>旧系统服务配置</td>
+      <td>
+        可执行 <code>systemctl cat wailearning-old-system.service</code>。
+        如果服务名不同，把真实服务名的输出给 LLM。
+      </td>
+    </tr>
+    <tr>
+      <td>旧系统目录结构</td>
+      <td>
+        可给 <code>ls -la /opt</code> 和旧系统部署目录的
+        <code>ls -la</code> 输出，用于确认真实 release 路径。
+      </td>
+    </tr>
+    <tr>
+      <td>旧仓库后端关键代码</td>
+      <td>
+        如果附件或表结构异常，给 LLM 旧仓库的
+        <code>app/models.py</code>、<code>app/attachments.py</code>、
+        <code>app/config.py</code> 更有帮助。
+      </td>
+    </tr>
+    <tr>
+      <td>已生成的迁移包内部清单</td>
+      <td>
+        如果 tar.gz 已生成但内容不对，解包后提供
+        <code>manifest.txt</code>、<code>db-table-counts.tsv</code>、
+        <code>upload-roots-included.txt</code>。
+      </td>
+    </tr>
+  </table>
+
+  <p class="warn">
+    如果需要把材料给外部 LLM 或第三方，请先打码数据库密码、SECRET_KEY、
+    域名证书路径、服务器公网 IP 中不想公开的部分。
+  </p>
 </main>
 </body>
 </html>
