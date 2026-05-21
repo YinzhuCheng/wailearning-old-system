@@ -6,34 +6,31 @@
   <title>旧系统导出工具包入口</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --ink: #162033;
-      --muted: #5a6980;
-      --line: #dbe4ef;
+      --bg: #f7f8fb;
+      --ink: #0f172a;
+      --muted: #334155;
+      --line: #e2e8f0;
       --accent: #155eef;
-      --soft: #eef4ff;
-      --warn-bg: #fff5dd;
-      --ok-bg: #edf9f1;
-      --shadow: 0 12px 30px rgba(18, 30, 47, 0.08);
+      --note: #eef4ff;
+      --warn: #fff6de;
     }
     * { box-sizing: border-box; }
+    html, body { max-width: 100%; }
     body {
       margin: 0;
-      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      background: var(--bg);
       color: var(--ink);
-      font: 16px/1.72 "Microsoft YaHei", "PingFang SC", sans-serif;
+      font: 16px/1.75 "Microsoft YaHei", "PingFang SC", sans-serif;
     }
     main {
       max-width: 920px;
       margin: 0 auto;
-      padding: 28px 16px 64px;
+      padding: 26px 14px 64px;
     }
-    h1, h2, h3 { line-height: 1.2; margin: 0 0 14px; }
-    h1 { font-size: 32px; }
-    h2 { margin-top: 28px; font-size: 22px; }
-    h3 { margin-top: 18px; font-size: 18px; }
-    p, li, td { color: var(--muted); }
+    h1, h2 { line-height: 1.25; margin: 0 0 10px; }
+    h1 { font-size: 28px; letter-spacing: 0.2px; }
+    h2 { margin-top: 22px; font-size: 18px; }
+    p, li { color: var(--muted); }
     a {
       color: var(--accent);
       text-decoration: none;
@@ -43,181 +40,67 @@
     a:hover { text-decoration: underline; }
     code, pre {
       font-family: Consolas, "SFMono-Regular", monospace;
-    }
-    code {
-      padding: 2px 6px;
-      border-radius: 6px;
-      background: #eef3fb;
-      color: #22304a;
-    }
-    pre {
-      margin: 0;
-      overflow-x: auto;
-      padding: 14px 16px;
-      border-radius: 12px;
-      background: #101828;
-      color: #f4f7fd;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .hero, .card, .warn, .ok {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 18px 18px 16px;
-      margin-top: 18px;
-    }
-    .warn { background: var(--warn-bg); }
-    .ok { background: var(--ok-bg); }
-    .stack {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .linkbox {
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid #e4ecf8;
-      background: #f8fbff;
-    }
-    .label {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--ink);
-      font-weight: 700;
-    }
-    .inline-list {
-      margin: 8px 0 0 20px;
-      padding: 0;
-    }
-    .inline-list li { margin: 6px 0; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-      background: var(--card);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    th, td {
-      border: 1px solid var(--line);
-      padding: 12px 14px;
-      text-align: left;
-      vertical-align: top;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
-    th {
-      background: #f6f9fe;
-      color: var(--ink);
+    code {
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #1e293b;
+      white-space: normal;
     }
-    .small { font-size: 14px; }
-    @media (max-width: 760px) {
-      h1 { font-size: 28px; }
-      main { padding: 20px 12px 48px; }
+    pre {
+      margin: 10px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #0b1220;
+      background: #0b1220;
+      color: #f8fafc;
+      white-space: pre-wrap;
     }
+    .callout {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--line);
+      background: #fff;
+    }
+    .callout.note { border-left-color: var(--accent); background: var(--note); }
+    .callout.warn { border-left-color: #d97706; background: var(--warn); }
+    ul, ol { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 6px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
   </style>
 </head>
 <body>
 <main>
-  <section class="hero">
-    <h1>旧系统导出工具包入口</h1>
-    <p>
-      这里是整个 <code>standalone-old-export-kit</code> 的总入口。
-      这个页面只做目录和入口，不承担复杂排版。
-      你可以把它当成一份可点击的“增强版 markdown”。
-    </p>
-  </section>
+  <h1>旧系统导出工具包入口</h1>
+  <p>
+    这个页面只做目录。真正的导出流程在 <code>exporter-pack/00_START_HERE_EXPORTER.html</code>。
+  </p>
 
-  <section class="card">
-    <h2>先怎么选</h2>
-    <div class="stack">
-      <div class="linkbox">
-        <span class="label">最稳妥的导出者路线</span>
-        先打开 <a href="./exporter-pack/00_START_HERE_EXPORTER.html">exporter-pack/00_START_HERE_EXPORTER.html</a>，
-        然后直接用 <a href="./exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a>。
-      </div>
-      <div class="linkbox">
-        <span class="label">重复导出 / 拉最新版脚本</span>
-        先打开 <a href="./exporter-pack/00_START_HERE_EXPORTER.html">exporter-pack/00_START_HERE_EXPORTER.html</a>，
-        然后用 <a href="./exporter-pack/02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a>。
-      </div>
-      <div class="linkbox">
-        <span class="label">协调人 / 排障者 / LLM</span>
-        协调人先看 <a href="./exporter-pack/10_COORDINATOR_NOTES.html">10_COORDINATOR_NOTES.html</a>；
-        出问题时看 <a href="./exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>。
-      </div>
-    </div>
-  </section>
+  <h2>先看哪个</h2>
+  <ol>
+    <li><a href="./exporter-pack/00_START_HERE_EXPORTER.html">exporter-pack/00_START_HERE_EXPORTER.html</a>：导出执行者入口。</li>
+    <li><a href="./exporter-pack/10_COORDINATOR_NOTES.html">exporter-pack/10_COORDINATOR_NOTES.html</a>：协调人说明（如何发给执行者）。</li>
+    <li><a href="./exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html">exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>：排障与 LLM 问题包模板。</li>
+  </ol>
 
-  <section class="card">
-    <h2>主流程</h2>
-    <ol class="inline-list">
-      <li>先打开 <a href="./exporter-pack/00_START_HERE_EXPORTER.html">导出者入口页</a>。</li>
-      <li>在旧服务器的 Workbench 里执行导出代码流。</li>
-      <li>在旧服务器上运行 <a href="./exporter-pack/04_verify_export_bundle.sh">04_verify_export_bundle.sh</a> 做包校验。</li>
-      <li>把 <code>.tar.gz</code> 和 <code>.sha256</code> 下载到 Windows。</li>
-      <li>在 Windows 上运行 <a href="./exporter-pack/05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> 做 SHA256 校验。</li>
-      <li>若任何一步失败，把代码流、脚本和终端输出一起给 LLM。</li>
-    </ol>
-  </section>
+  <div class="callout note">
+    <strong>一句话：</strong>“导出完成”不算结束。必须把 <code>.tar.gz</code> 和同名 <code>.sha256</code> 下载到 Windows，并在 Windows 本地校验。
+  </div>
 
-  <section class="warn">
-    <strong>重要：</strong>
-    “导出完成”只表示文件在旧服务器上生成了，不代表已经自动到了 Windows。
-    下载到 Windows 和 Windows 本地 SHA256 校验，是正式主流程的一部分。
-  </section>
+  <h2>如果你需要把问题交给 LLM</h2>
+  <p>
+    最少提供：你用的是 <code>01_WORKBENCH_DIRECT_PASTE.txt</code> 还是 <code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code>，再加上 Workbench 最近 200 行输出。
+    其它更完整的清单见 <a href="./exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>。
+  </p>
 
-  <section class="card">
-    <h2>按偏好选哪个文件</h2>
-    <div class="stack">
-      <div class="linkbox">
-        <span class="label">最稳、最少出意外</span>
-        <a href="./exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a>。
-        整段复制进 Workbench，不依赖 GitHub raw。
-      </div>
-      <div class="linkbox">
-        <span class="label">后续反复执行</span>
-        <a href="./exporter-pack/02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a>。
-        先下载脚本再执行，适合后续维护。
-      </div>
-      <div class="linkbox">
-        <span class="label">先看下载图示</span>
-        <a href="./exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a>。
-        专门讲怎么把包从 Workbench 带回 Windows。
-      </div>
-    </div>
-  </section>
+  <hr>
 
-  <section class="card">
-    <h2>出错时给 LLM 哪些材料</h2>
-    <ul class="inline-list">
-      <li><a href="./exporter-pack/00_START_HERE_EXPORTER.html">00_START_HERE_EXPORTER.html</a></li>
-      <li><a href="./exporter-pack/01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a> 或 <a href="./exporter-pack/02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a></li>
-      <li><a href="./exporter-pack/03_standalone_old_export.sh">03_standalone_old_export.sh</a></li>
-      <li><a href="./exporter-pack/04_verify_export_bundle.sh">04_verify_export_bundle.sh</a></li>
-      <li><a href="./exporter-pack/05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a></li>
-      <li><a href="./exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a></li>
-      <li>Workbench 最近 200 行输出</li>
-      <li>若包已生成：<code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code></li>
-    </ul>
-    <div class="ok">
-      最小原则：不要只给一句报错。至少把“实际用了哪个代码流 + 主脚本 + 终端输出”一起给出去。
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>工具包内部导航</h2>
-    <ul class="inline-list">
-      <li><a href="./exporter-pack/00_START_HERE_EXPORTER.html">exporter-pack/00_START_HERE_EXPORTER.html</a> - 导出者入口页，先看它。</li>
-      <li><a href="./exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">exporter-pack/20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a> - Workbench 下载到 Windows 的图示说明页。</li>
-      <li><a href="./exporter-pack/10_COORDINATOR_NOTES.html">exporter-pack/10_COORDINATOR_NOTES.html</a> - 协调人说明。</li>
-      <li><a href="./exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html">exporter-pack/90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a> - 复杂版排障说明。</li>
-      <li><a href="./README.md">README.md</a> - 文本说明索引。</li>
-    </ul>
-  </section>
+  <div class="callout warn">
+    <strong>提醒：</strong>不要把长命令拆成多段粘贴；不要跳过 <code>.sha256</code>；不要把“导出成功”误当成“已下载到 Windows”。
+  </div>
 </main>
 </body>
 </html>

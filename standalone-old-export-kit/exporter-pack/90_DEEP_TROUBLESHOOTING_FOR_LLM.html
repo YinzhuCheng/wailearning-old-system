@@ -6,34 +6,31 @@
   <title>复杂版排障说明</title>
   <style>
     :root {
-      --ink: #172033;
-      --muted: #52627a;
-      --line: #d6e1ed;
-      --card: #ffffff;
-      --bg: #f3f6fa;
+      --bg: #f7f8fb;
+      --ink: #0f172a;
+      --muted: #334155;
+      --line: #e2e8f0;
       --accent: #155eef;
-      --warn: #8a5700;
-      --warn-bg: #fff6de;
-      --ok-bg: #eef9f1;
-      --shadow: 0 14px 36px rgba(21, 31, 48, 0.08);
+      --note: #eef4ff;
+      --warn: #fff6de;
     }
     * { box-sizing: border-box; }
+    html, body { max-width: 100%; }
     body {
       margin: 0;
-      background: linear-gradient(180deg, #f7faff 0%, var(--bg) 100%);
+      background: var(--bg);
       color: var(--ink);
-      font: 16px/1.7 "Microsoft YaHei", "PingFang SC", sans-serif;
+      font: 16px/1.75 "Microsoft YaHei", "PingFang SC", sans-serif;
     }
     main {
-      max-width: 1100px;
+      max-width: 980px;
       margin: 0 auto;
-      padding: 34px 20px 72px;
+      padding: 26px 14px 64px;
     }
-    h1, h2, h3 { line-height: 1.2; margin: 0 0 14px; }
-    h1 { font-size: 34px; }
-    h2 { margin-top: 34px; font-size: 24px; }
-    h3 { margin-top: 22px; font-size: 18px; }
-    p, li, td { color: var(--muted); }
+    h1, h2 { line-height: 1.25; margin: 0 0 10px; }
+    h1 { font-size: 28px; letter-spacing: 0.2px; }
+    h2 { margin-top: 22px; font-size: 18px; }
+    p, li { color: var(--muted); }
     a {
       color: var(--accent);
       text-decoration: none;
@@ -41,264 +38,101 @@
       word-break: break-word;
     }
     a:hover { text-decoration: underline; }
-    code, pre { font-family: Consolas, "SFMono-Regular", monospace; }
-    code {
-      padding: 2px 6px;
-      border-radius: 6px;
-      background: #eef3fb;
-      color: #21304c;
-    }
-    pre {
-      margin: 0;
-      overflow-x: auto;
-      padding: 14px 16px;
-      border-radius: 12px;
-      background: #0f1727;
-      color: #f2f6fd;
-    }
-    .hero, .card, .warn, .ok {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-    }
-    .hero, .card { padding: 20px 20px 18px; }
-    .warn, .ok { padding: 16px 18px; }
-    .warn { background: var(--warn-bg); border-color: #efd4a2; }
-    .ok { background: var(--ok-bg); border-color: #bfe1c9; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 14px;
-      background: var(--card);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    th, td {
-      padding: 12px 14px;
-      border: 1px solid var(--line);
-      text-align: left;
-      vertical-align: top;
+    code, pre {
+      font-family: Consolas, "SFMono-Regular", monospace;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
-    th { background: #f6f9fe; color: var(--ink); }
-    .small { font-size: 14px; }
-    @media (max-width: 860px) {
-      .grid { grid-template-columns: 1fr; }
-      h1 { font-size: 28px; }
-      main { padding: 24px 14px 60px; }
+    code {
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #1e293b;
+      white-space: normal;
     }
+    pre {
+      margin: 10px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #0b1220;
+      background: #0b1220;
+      color: #f8fafc;
+      white-space: pre-wrap;
+    }
+    .callout {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--line);
+      background: #fff;
+    }
+    .callout.note { border-left-color: var(--accent); background: var(--note); }
+    .callout.warn { border-left-color: #d97706; background: var(--warn); }
+    ul, ol { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 6px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
   </style>
 </head>
 <body>
 <main>
-  <section class="hero">
-    <h1>复杂版排障说明</h1>
-    <p>
-      这个页面不是给普通导出执行者看的，而是给“排障者 / 接手迁移的人 / LLM”看的。
-      它把这套导出包背后的兼容性假设、已经规避的坑、以及异常时应该采集的材料写清楚，
-      目的是避免重复踩坑和重复试错。
-    </p>
-  </section>
+  <h1>复杂版排障说明</h1>
+  <p>
+    这页不是给普通执行者看的，而是给排障者、接手迁移的人、以及 LLM 看的问题包。
+    目标是把“哪里坏了、该看什么、该怎么问”一次写清楚。
+  </p>
 
-  <section class="grid">
-    <div class="card">
-      <h2>推荐给 LLM 的文件集</h2>
-      <ul>
-        <li><code>01_WORKBENCH_DIRECT_PASTE.txt</code> 或 <code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code></li>
-        <li>Workbench 最近 200 行输出</li>
-        <li><code>03_standalone_old_export.sh</code></li>
-        <li><code>04_verify_export_bundle.sh</code> 的输出</li>
-        <li>若包已生成：<code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code></li>
-        <li>若已导入：<code>06_post_import_verify.sh</code> 的输出</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h2>最重要的判断题</h2>
-      <ul>
-        <li>问题发生在“导出阶段”还是“下载到 Windows 阶段”还是“导入后验证阶段”？</li>
-        <li>当前 Workbench 连接方式是终端连接还是会话管理连接？</li>
-        <li>失败的是数据库导出、附件收集、Workbench 下载、还是新库对账？</li>
-        <li>是否有权限问题，例如不是 <code>root</code>、或者无权读取目标文件？</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>我在这次整理里刻意规避的坑</h2>
-    <table>
-      <tr>
-        <th>坑</th>
-        <th>为什么会踩</th>
-        <th>现在怎么规避</th>
-      </tr>
-      <tr>
-        <td>长命令被 Workbench 自动折行，导致命令被截成两段</td>
-        <td>直接把超长 raw URL、超长一行脚本、或局部片段复制进终端时，浏览器终端可能自动换行，肉眼还不容易发现。</td>
-        <td>提供完整复制粘贴版，尽量使用 heredoc 包裹脚本主体，并压短显式长行；文档明确要求“整文件复制”，不要只复制中间一段。</td>
-      </tr>
-      <tr>
-        <td>误以为“导出完成”就已经到 Windows</td>
-        <td>原流程只说明旧服务器产生了 <code>tar.gz</code>，但没有把“下载回本地”写成正式步骤。</td>
-        <td>现在把“旧服务器校验”与“Windows 下载/校验”升级为主流程步骤，而不是补充说明。</td>
-      </tr>
-      <tr>
-        <td>下载了文件，但本地拿到的是坏包</td>
-        <td>浏览器下载中断、重复开始、网络抖动都可能得到存在但损坏的文件。</td>
-        <td>导出脚本额外输出外层 <code>.sha256</code>，并提供 Windows 校验脚本。</td>
-      </tr>
-      <tr>
-        <td>Workbench 文件管理打不开</td>
-        <td>阿里云官方文档明确说明：会话管理连接不支持文件管理。</td>
-        <td>文档把“必须优先用终端连接”写成前置条件，并给出症状判断。</td>
-      </tr>
-      <tr>
-        <td>附件核对只看数据库 URL，不看落盘文件</td>
-        <td>数据库里的附件 URL 存在，不等于新系统磁盘上文件一定存在。</td>
-        <td>导出脚本新增 <code>upload-relative-inventory.txt</code>，导入后验证脚本逐个对照落盘文件。</td>
-      </tr>
-      <tr>
-        <td>导入后把所有表都要求“完全相等”</td>
-        <td>新系统 bootstrap 或修复逻辑可能补齐某些表，例如课程选课关系。</td>
-        <td><code>post_import_verify.sh</code> 对核心主表做精确比较，对 <code>course_enrollments</code> 采用“不少于旧库”的标准。</td>
-      </tr>
-    </table>
-  </section>
-
-  <section class="warn">
-    <strong>兼容性判断要点：</strong>
-    这里的“版本兼容”不只指脚本语法，也包括 Workbench 版本、登录方式、包管理器差异、
-    旧系统路径差异、以及服务器是否自带 <code>sha256sum</code> / <code>psql</code> / <code>pg_dump</code>。
-    这套脚本已经尽量做了降级处理，但排障时必须先确认具体差在哪一层。
-  </section>
-
-  <section class="card">
-    <h2>Workbench 相关兼容性</h2>
-    <table>
-      <tr>
-        <th>问题</th>
-        <th>说明</th>
-      </tr>
-      <tr>
-        <td>Workbench 1.0 / 2.0</td>
-        <td>阿里云官方文档当前同时描述了 1.0 和 2.0 的文件树入口，UI 不同，但都支持 Linux 文件下载。</td>
-      </tr>
-      <tr>
-        <td>终端连接 / 会话管理连接</td>
-        <td>文件管理功能不支持会话管理连接。看到实例名后带 <code>ssm</code>，或文件树里提示当前登录方式不支持，一般就是这个问题。</td>
-      </tr>
-      <tr>
-        <td>下载速度慢</td>
-        <td>阿里云官方文档明确提到高峰期传输可能变慢。不要把“慢”误判成“脚本坏了”。</td>
-      </tr>
-      <tr>
-        <td>文件权限不足</td>
-        <td>官方文档也明确要求使用 <code>root</code> 或具备目标文件读取权限的账号，否则下载可能失败。</td>
-      </tr>
-    </table>
-  </section>
-
-  <section class="card">
-    <h2>脚本层兼容性</h2>
-    <table>
-      <tr>
-        <th>点</th>
-        <th>当前处理</th>
-      </tr>
-      <tr>
-        <td>包管理器差异</td>
-        <td>脚本按顺序兼容 <code>apt-get</code>、<code>dnf</code>、<code>yum</code>。</td>
-      </tr>
-      <tr>
-        <td><code>pg_dump</code> 缺失</td>
-        <td>脚本会尝试自动安装 PostgreSQL client。</td>
-      </tr>
-      <tr>
-        <td><code>psql</code> 缺失</td>
-        <td>脚本允许降级：数据库可导出，但会跳过附件引用清单与表统计。</td>
-      </tr>
-      <tr>
-        <td><code>sha256sum</code> / <code>shasum</code> 缺失</td>
-        <td>脚本会降级跳过生成 SHA256 文件；这时应依赖结构校验与 <code>tar -tzf</code> 可读性确认。</td>
-      </tr>
-      <tr>
-        <td>旧系统路径不同</td>
-        <td>通过顶部变量 <code>APP_NAME</code>、<code>ENV_FILE</code>、<code>RELEASE_DIR</code>、<code>OUT_DIR</code>、<code>EXTRA_UPLOAD_DIRS</code> 覆盖。</td>
-      </tr>
-    </table>
-  </section>
-
-  <section class="card">
-    <h2>大文件 / 传输策略判断</h2>
-    <p>
-      这部分不是原始脚本逻辑，而是排障时的策略建议。
-    </p>
+  <div class="callout note">
+    <strong>给 LLM 的最小文件集：</strong>
     <ul>
-      <li>若 Workbench 文件管理可用，先用它下载，最简单。</li>
-      <li>若 Workbench 文件管理不可用，先检查是否用了会话管理连接。</li>
-      <li>若下载持续失败或速度极慢，改用 <code>scp</code> / <code>sftp</code> / OSS 中转，不要反复赌浏览器下载。</li>
-      <li>若需要给导出者更低风险的方案，优先保留“直接粘贴版”，避免要求他们自己拼装命令。</li>
+      <li><code>01_WORKBENCH_DIRECT_PASTE.txt</code> 或 <code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code></li>
+      <li>Workbench 最近 200 行输出</li>
+      <li><code>03_standalone_old_export.sh</code></li>
+      <li><code>04_verify_export_bundle.sh</code> 的输出</li>
+      <li>若包已生成，再加上 <code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code></li>
+      <li>若已导入，再加 <code>06_post_import_verify.sh</code> 的输出</li>
     </ul>
-    <div class="ok">
-      <strong>为什么没有把所有内容都做成单行命令：</strong>
-      因为在 Workbench 里，短命令不一定比结构化 heredoc 更安全。对人类执行者来说，
-      “整段复制粘贴，不要改中间内容”比“拼几行 curl + bash + 变量覆盖”更不容易出事故。
-    </div>
-  </section>
+  </div>
 
-  <section class="card">
-    <h2>导入后验证为什么这样设计</h2>
+  <h2>先判断故障层</h2>
+  <ul>
+    <li>问题是在导出阶段、下载到 Windows 阶段，还是导入后验证阶段？</li>
+    <li>Workbench 当前是终端连接还是会话管理连接？</li>
+    <li>失败的是数据库导出、附件收集、下载、还是新库对账？</li>
+    <li>是否只是权限问题，例如不是 <code>root</code>，或者无权读取目标文件？</li>
+  </ul>
+
+  <div class="callout warn">
+    <strong>我刻意避免的坑：</strong>
     <ul>
-      <li>核心表使用精确比较：<code>users</code>、<code>students</code>、<code>classes</code>、<code>subjects</code>、<code>homeworks</code>、<code>homework_submissions</code>、<code>course_materials</code>、<code>notifications</code>。</li>
-      <li><code>course_enrollments</code> 使用“新库不少于旧库”的比较，是为了兼容新系统导入或 bootstrap 可能修复出的额外选课数据。</li>
-      <li>附件采用文件存在性清单，而不是靠 URL 推断，因为 URL 不等于落盘成功。</li>
-      <li>复杂关系表没有一股脑全部纳入硬比较，是为了避免“工具太严反而误报”。</li>
+      <li>长命令被 Workbench 自动折行，结果命令被截成两段。</li>
+      <li>只看到“导出完成”，却误以为文件已经到 Windows。</li>
+      <li>只下载了 <code>.tar.gz</code>，没带 <code>.sha256</code>，导致坏包无法确认。</li>
+      <li>用会话管理连接去找文件管理功能，结果根本没有下载入口。</li>
+      <li>只看数据库里的附件 URL，不看落盘文件是否真的存在。</li>
     </ul>
-  </section>
+  </div>
 
-  <section class="card">
-    <h2>给 LLM 的提问模板</h2>
-    <pre><code>我在执行旧系统独立导出或迁移验证。
+  <h2>兼容性判断要点</h2>
+  <p>
+    这里的“兼容”不只是脚本语法，也包括 Workbench 版本、登录方式、包管理器、旧系统路径差异，
+    以及服务器是否自带 <code>sha256sum</code>、<code>psql</code>、<code>pg_dump</code>。
+  </p>
+  <ul>
+    <li><strong>Workbench 1.0 / 2.0：</strong>界面可能不同，但文件下载思路相同。</li>
+    <li><strong>终端连接 / 会话管理连接：</strong>文件管理功能通常只对终端连接可用。</li>
+    <li><strong>下载慢：</strong>先当成网络或高峰期问题，不要立刻判脚本坏了。</li>
+    <li><strong>权限不足：</strong>先确认旧服务器账号是 <code>root</code>，或者至少能读目标路径。</li>
+  </ul>
 
-阶段：
-- 导出前 / 导出中 / 导出后校验 / 下载到 Windows / Windows 校验 / 新系统导入后验证
-
-我提供的文件：
-- 01_WORKBENCH_DIRECT_PASTE.txt 或 02_WORKBENCH_DOWNLOAD_SCRIPT.txt
-- 03_standalone_old_export.sh
-- 04_verify_export_bundle.sh 或 06_post_import_verify.sh 的输出
-- Workbench 最近 200 行输出
-- 如果包已生成：manifest.txt, db-table-counts.tsv, upload-roots-included.txt
-
-请优先判断：
-1. 是 Workbench 连接方式问题、权限问题、脚本兼容性问题、还是数据差异问题？
-2. 下一步最小修复动作是什么？
-3. 哪些敏感信息需要打码后再继续分享？</code></pre>
-  </section>
-
-  <section class="card">
-    <h2>官方参考与我依据的当前版本</h2>
-    <p class="small">
-      我查阅的主要官方文档版本包括：
-      英文文档 <strong>2026 年 3 月 13 日</strong>，
-      中文文档 <strong>2025 年 11 月 26 日</strong>。
-      它们都说明了 Linux 实例在 Workbench 中的文件管理下载能力、会话管理连接限制，以及传输高峰期可能变慢。
-    </p>
+  <div class="callout note">
+    <strong>如果要把问题交给 LLM，建议这样问：</strong>
     <ul>
-      <li><a href="https://www.alibabacloud.com/help/doc-detail/478698.html">Use Workbench to upload or download files</a></li>
-      <li><a href="https://www.alibabacloud.com/help/zh/ecs/user-guide/use-workbench-to-upload-a-file-to-a-linux-instance">使用 Workbench 上传或下载文件</a></li>
-      <li><a href="https://www.alibabacloud.com/help/en/ecs/user-guide/choose-how-to-transfer-files">choose how to transfer files</a></li>
-      <li><a href="https://www.alibabacloud.com/help/en/ecs/user-guide/transfer-files-to-an-instance-using-object-storage">transfer files using OSS</a></li>
+      <li>说明你执行的是哪份代码流。</li>
+      <li>说明故障发生在主流程哪一步。</li>
+      <li>附上最近 200 行终端输出。</li>
+      <li>如果已经生成包，附上清单文件和校验文件。</li>
+      <li>如果是 Windows 下载问题，附上下载路径和 <code>05_windows_verify_bundle.ps1</code> 的输出。</li>
     </ul>
-  </section>
+  </div>
 </main>
 </body>
 </html>

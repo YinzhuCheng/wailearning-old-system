@@ -3,36 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>导出者入口包</title>
+  <title>旧系统导出者入口包</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --ink: #162033;
-      --muted: #5a6980;
-      --line: #dbe4ef;
+      --bg: #f7f8fb;
+      --ink: #0f172a;
+      --muted: #334155;
+      --line: #e2e8f0;
       --accent: #155eef;
-      --warn-bg: #fff5dd;
-      --ok-bg: #edf9f1;
-      --shadow: 0 12px 30px rgba(18, 30, 47, 0.08);
+      --note: #eef4ff;
+      --warn: #fff6de;
     }
     * { box-sizing: border-box; }
+    html, body { max-width: 100%; }
     body {
       margin: 0;
-      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      background: var(--bg);
       color: var(--ink);
-      font: 16px/1.72 "Microsoft YaHei", "PingFang SC", sans-serif;
+      font: 16px/1.75 "Microsoft YaHei", "PingFang SC", sans-serif;
     }
     main {
       max-width: 920px;
       margin: 0 auto;
-      padding: 28px 16px 64px;
+      padding: 26px 14px 64px;
     }
-    h1, h2, h3 { margin: 0 0 14px; line-height: 1.2; }
-    h1 { font-size: 32px; }
-    h2 { margin-top: 28px; font-size: 22px; }
-    h3 { margin-top: 18px; font-size: 18px; }
-    p, li, td { color: var(--muted); }
+    h1, h2 { line-height: 1.25; margin: 0 0 10px; }
+    h1 { font-size: 28px; letter-spacing: 0.2px; }
+    h2 { margin-top: 22px; font-size: 18px; }
+    p, li { color: var(--muted); }
     a {
       color: var(--accent);
       text-decoration: none;
@@ -42,158 +40,87 @@
     a:hover { text-decoration: underline; }
     code, pre {
       font-family: Consolas, "SFMono-Regular", monospace;
-    }
-    code {
-      padding: 2px 6px;
-      border-radius: 6px;
-      background: #eef3fb;
-      color: #22304a;
-    }
-    pre {
-      margin: 0;
-      overflow-x: auto;
-      padding: 14px 16px;
-      border-radius: 12px;
-      background: #101828;
-      color: #f4f7fd;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .hero, .card, .warn, .ok {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 18px 18px 16px;
-      margin-top: 18px;
-    }
-    .warn { background: var(--warn-bg); }
-    .ok { background: var(--ok-bg); }
-    .stack {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .linkbox {
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 1px solid #e4ecf8;
-      background: #f8fbff;
-    }
-    .label {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--ink);
-      font-weight: 700;
-    }
-    ul { margin: 8px 0 0 20px; padding: 0; }
-    li { margin: 6px 0; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-      background: var(--card);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    th, td {
-      border: 1px solid var(--line);
-      padding: 12px 14px;
-      text-align: left;
-      vertical-align: top;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
-    th { background: #f6f9fe; color: var(--ink); }
-    .small { font-size: 14px; }
-    @media (max-width: 760px) {
-      h1 { font-size: 28px; }
-      main { padding: 20px 12px 48px; }
+    code {
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #1e293b;
+      white-space: normal;
     }
+    pre {
+      margin: 10px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #0b1220;
+      background: #0b1220;
+      color: #f8fafc;
+      white-space: pre-wrap;
+    }
+    .callout {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--line);
+      background: #fff;
+    }
+    .callout.note { border-left-color: var(--accent); background: var(--note); }
+    .callout.warn { border-left-color: #d97706; background: var(--warn); }
+    ul, ol { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 6px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
   </style>
 </head>
 <body>
 <main>
-  <section class="hero">
-    <h1>旧系统导出者入口包</h1>
-    <p>
-      这个文件夹是专门给旧系统导出执行者的。
-      如果你只想顺利完成工作，不想研究细节，就按这个页面的顺序往下走。
-      这个页面只保留最少信息，复杂排障说明放在下级文档。
-    </p>
-  </section>
+  <h1>旧系统导出者入口包</h1>
+  <p>
+    这是一份给旧系统维护者的纯入口包。你只要打开这个文件夹，先看
+    <code>00_START_HERE_EXPORTER.html</code>，然后按里面的主流程做即可。
+  </p>
 
-  <section class="card">
-    <h2>你现在应该先用哪个版本</h2>
-    <div class="stack">
-      <div class="linkbox">
-        <span class="label">首选，最稳妥</span>
-        用 <a href="./01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a>。
-        这是整段直接粘贴到 Workbench 的版本，不依赖 GitHub raw。
-      </div>
-      <div class="linkbox">
-        <span class="label">备选，适合以后反复执行</span>
-        用 <a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a>。
-        这是先下载脚本再执行的版本，适合后续复用最新版脚本。
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>最短工作流程</h2>
+  <div class="callout note">
+    <strong>先用哪个版本：</strong>
     <ol>
-      <li>先在旧服务器的 Workbench 里执行导出代码流。</li>
-      <li>导出完成后，不要离开旧服务器，先运行 <a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a> 做包校验。</li>
-      <li>把 <code>.tar.gz</code> 和同名 <code>.sha256</code> 下载到 Windows。</li>
-      <li>在 Windows 上运行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> 做 SHA256 校验。</li>
-      <li>校验通过后，再把包交给迁移接手者。</li>
+      <li><a href="./01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a>（首选，整段复制到 Workbench；不依赖 GitHub raw）。</li>
+      <li><a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a>（备选，先下载脚本再执行）。</li>
     </ol>
-  </section>
+  </div>
 
-  <section class="warn">
-    <strong>关键提醒：</strong>
-    “导出完成”只代表文件已经在旧服务器生成，不代表已经自动到了 Windows。
-    下载到 Windows 和 Windows 本地校验，是正式步骤，不要跳过。
-  </section>
+  <h2>主流程</h2>
+  <ol>
+    <li>在旧服务器 Workbench 里执行导出代码流。</li>
+    <li>导出后先运行 <a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a> 做旧服务器校验。</li>
+    <li>把 <code>.tar.gz</code> 和同名 <code>.sha256</code> 下载到 Windows。</li>
+    <li>在 Windows 上运行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> 做本地校验。</li>
+    <li>校验通过后，再把包交给迁移接手者。</li>
+  </ol>
 
-  <section class="card">
-    <h2>如果你需要图示版说明</h2>
-    <p>
-      打开 <a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a>。
-      它专门讲如何从 Workbench 把迁移包带回 Windows。
-    </p>
-  </section>
+  <div class="callout warn">
+    <strong>关键提醒：</strong>“导出完成”只表示旧服务器生成包，不表示文件已经到 Windows。
+    “下载到 Windows + Windows 本地校验”是主流程的一部分。
+  </div>
 
-  <section class="card">
-    <h2>如果出错，给 LLM 哪些东西</h2>
-    <ul>
-      <li>你实际执行的代码流：<a href="./01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a> 或 <a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a></li>
-      <li>主脚本：<a href="./03_standalone_old_export.sh">03_standalone_old_export.sh</a></li>
-      <li>旧服务器校验脚本：<a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a></li>
-      <li>Workbench 最近 200 行输出</li>
-      <li>如果包已生成：<code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code></li>
-      <li>复杂版排障说明：<a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a></li>
-    </ul>
-    <div class="ok">
-      最小原则：不要只给一句报错。至少把“实际用了哪个代码流 + 主脚本 + 终端输出”一起给出去。
-    </div>
-  </section>
+  <h2>下载到 Windows 的说明</h2>
+  <p>
+    如果你想要更聚焦的下载说明，打开
+    <a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a>。
+  </p>
 
-  <section class="card">
-    <h2>这个文件夹里的文件</h2>
-    <ul>
-      <li><a href="./01_WORKBENCH_DIRECT_PASTE.txt">01_WORKBENCH_DIRECT_PASTE.txt</a> - 直接粘贴版代码流</li>
-      <li><a href="./02_WORKBENCH_DOWNLOAD_SCRIPT.txt">02_WORKBENCH_DOWNLOAD_SCRIPT.txt</a> - 脚本下载版代码流</li>
-      <li><a href="./03_standalone_old_export.sh">03_standalone_old_export.sh</a> - 主导出脚本</li>
-      <li><a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a> - 旧服务器导出包校验脚本</li>
-      <li><a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> - Windows 本地校验脚本</li>
-      <li><a href="./06_post_import_verify.sh">06_post_import_verify.sh</a> - 导入后验证脚本</li>
-      <li><a href="./10_COORDINATOR_NOTES.html">10_COORDINATOR_NOTES.html</a> - 协调人说明</li>
-      <li><a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a> - 下载图示说明</li>
-      <li><a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a> - 复杂版排障说明</li>
-    </ul>
-  </section>
+  <h2>出错时给 LLM 什么</h2>
+  <ul>
+    <li>你实际用了哪份代码流：<code>01_WORKBENCH_DIRECT_PASTE.txt</code> 或 <code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code>。</li>
+    <li>主脚本：<code>03_standalone_old_export.sh</code>。</li>
+    <li>旧服务器校验脚本：<code>04_verify_export_bundle.sh</code>。</li>
+    <li>Workbench 最近 200 行输出。</li>
+    <li>如果已经生成包，再带上 <code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code>。</li>
+    <li>复杂排障页：<a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>。</li>
+  </ul>
+
+  <div class="callout note">
+    <strong>最小建议：</strong>不要只发一句“报错了”。至少把“用了哪个代码流 + 哪个脚本 + 终端输出”一起给出去。
+  </div>
 </main>
 </body>
 </html>

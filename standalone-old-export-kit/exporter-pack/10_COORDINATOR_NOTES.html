@@ -6,31 +6,31 @@
   <title>协调人说明</title>
   <style>
     :root {
-      --ink: #182235;
-      --muted: #55647b;
-      --line: #d8e2ee;
-      --card: #ffffff;
-      --bg: #f4f7fb;
+      --bg: #f7f8fb;
+      --ink: #0f172a;
+      --muted: #334155;
+      --line: #e2e8f0;
       --accent: #155eef;
-      --warn-bg: #fff4dc;
-      --ok-bg: #edf9f1;
-      --shadow: 0 14px 36px rgba(18, 29, 45, 0.08);
+      --note: #eef4ff;
+      --warn: #fff6de;
     }
+    * { box-sizing: border-box; }
+    html, body { max-width: 100%; }
     body {
       margin: 0;
-      background: linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      background: var(--bg);
       color: var(--ink);
-      font: 16px/1.68 "Microsoft YaHei", "PingFang SC", sans-serif;
+      font: 16px/1.75 "Microsoft YaHei", "PingFang SC", sans-serif;
     }
     main {
-      max-width: 980px;
+      max-width: 920px;
       margin: 0 auto;
-      padding: 32px 18px 64px;
+      padding: 26px 14px 64px;
     }
-    h1, h2 { line-height: 1.2; margin: 0 0 14px; }
-    h1 { font-size: 32px; }
-    h2 { margin-top: 28px; font-size: 22px; }
-    p, li, td { color: var(--muted); }
+    h1, h2 { line-height: 1.25; margin: 0 0 10px; }
+    h1 { font-size: 28px; letter-spacing: 0.2px; }
+    h2 { margin-top: 22px; font-size: 18px; }
+    p, li { color: var(--muted); }
     a {
       color: var(--accent);
       text-decoration: none;
@@ -40,128 +40,61 @@
     a:hover { text-decoration: underline; }
     code, pre {
       font-family: Consolas, "SFMono-Regular", monospace;
-    }
-    code {
-      padding: 2px 6px;
-      border-radius: 6px;
-      background: #eef3fb;
-      color: #22304a;
-    }
-    .card, .warn, .ok {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 18px 18px 16px;
-      margin-top: 18px;
-    }
-    .warn { background: var(--warn-bg); }
-    .ok { background: var(--ok-bg); }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-      background: var(--card);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-    th, td {
-      border: 1px solid var(--line);
-      padding: 12px 14px;
-      text-align: left;
-      vertical-align: top;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
-    th {
-      background: #f6f9fe;
-      color: var(--ink);
+    code {
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #1e293b;
+      white-space: normal;
     }
+    .callout {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-left: 4px solid var(--line);
+      background: #fff;
+    }
+    .callout.note { border-left-color: var(--accent); background: var(--note); }
+    .callout.warn { border-left-color: #d97706; background: var(--warn); }
+    ul, ol { margin: 8px 0 0 20px; padding: 0; }
+    li { margin: 6px 0; }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
   </style>
 </head>
 <body>
 <main>
   <h1>协调人说明</h1>
   <p>
-    这个页面是给“你”这种协调人看的，不是给最终执行导出的同事看的。
-    目的是帮你把文件一次性交付到位，避免来回补充。
+    这页是给协调人看的，不是给最终执行者看的。目标只有一个：
+    你发出去的东西要够少、够清楚、够完整。
   </p>
 
-  <div class="ok">
-    <strong>最简单的发法：</strong>
-    直接把整个 <code>exporter-pack</code> 文件夹发给导出执行者，并告诉他
-    “先打开 <code>00_START_HERE_EXPORTER.html</code>，按顺序做”。
+  <div class="callout note">
+    <strong>最省事的发法：</strong>直接把整个 <code>exporter-pack</code> 文件夹发给执行者，并告诉他先开 <code>00_START_HERE_EXPORTER.html</code>。
   </div>
 
-  <div class="card">
-    <h2>这个文件夹里哪些文件是给谁看的</h2>
-    <table>
-      <tr>
-        <th>文件</th>
-        <th>主要读者</th>
-        <th>用途</th>
-      </tr>
-      <tr>
-        <td><code>00_START_HERE_EXPORTER.html</code></td>
-        <td>导出执行者</td>
-        <td>极简入口与顺序说明。</td>
-      </tr>
-      <tr>
-        <td><code>01_WORKBENCH_DIRECT_PASTE.txt</code></td>
-        <td>导出执行者</td>
-        <td>首选执行版，整段复制进 Workbench。</td>
-      </tr>
-      <tr>
-        <td><code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code></td>
-        <td>导出执行者</td>
-        <td>备选执行版，从 GitHub 拉脚本。</td>
-      </tr>
-      <tr>
-        <td><code>04_verify_export_bundle.sh</code></td>
-        <td>导出执行者</td>
-        <td>旧服务器导出完成后的自检。</td>
-      </tr>
-      <tr>
-        <td><code>05_windows_verify_bundle.ps1</code></td>
-        <td>导出执行者或接收包的人</td>
-        <td>Windows 本地核对下载包没坏。</td>
-      </tr>
-      <tr>
-        <td><code>06_post_import_verify.sh</code></td>
-        <td>迁移接手者</td>
-        <td>新系统导入后的数据与附件对账。</td>
-      </tr>
-      <tr>
-        <td><code>90_DEEP_TROUBLESHOOTING_FOR_LLM.html</code></td>
-        <td>排障者 / LLM</td>
-        <td>复杂版说明、踩坑分析、兼容性与提问模板。</td>
-      </tr>
-    </table>
+  <h2>谁看哪个文件</h2>
+  <ul>
+    <li><code>00_START_HERE_EXPORTER.html</code>：导出执行者的主入口。</li>
+    <li><code>01_WORKBENCH_DIRECT_PASTE.txt</code>：最稳的执行版本。</li>
+    <li><code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code>：备选执行版本。</li>
+    <li><code>04_verify_export_bundle.sh</code> 和 <code>05_windows_verify_bundle.ps1</code>：校验用。</li>
+    <li><code>06_post_import_verify.sh</code>：导入后验证用。</li>
+    <li><code>90_DEEP_TROUBLESHOOTING_FOR_LLM.html</code>：排障者 / LLM 用。</li>
+  </ul>
+
+  <div class="callout warn">
+    <strong>不要只发一段 txt：</strong>如果你只发 <code>01_WORKBENCH_DIRECT_PASTE.txt</code>，执行者容易断在“导出成功了，但不知道怎么把包带到 Windows”。现在 Windows 下载已经写入主流程。
   </div>
 
-  <div class="warn">
-    <strong>不要只发代码流 txt。</strong>
-    如果你只把 <code>01_WORKBENCH_DIRECT_PASTE.txt</code> 发给执行者，
-    很容易出现“导出成功了，但不知道怎么下到 Windows”这种断层。
-    现在要么发整个文件夹，要么至少一起发：
-    <code>00_START_HERE_EXPORTER.html</code>、
-    <code>01_WORKBENCH_DIRECT_PASTE.txt</code>、
-    <code>04_verify_export_bundle.sh</code>、
-    <code>05_windows_verify_bundle.ps1</code>。
-  </div>
-
-  <div class="card">
-    <h2>建议你的转述话术</h2>
+  <div class="callout note">
+    <strong>可以直接转述的话：</strong>
     <p>
-      你可以直接把下面这段话发给执行者：
-    </p>
-    <p>
-      “请打开文件夹里的 <code>00_START_HERE_EXPORTER.html</code>。
-      优先执行 <code>01_WORKBENCH_DIRECT_PASTE.txt</code>。
-      导出完成后不要退出，继续按页面说明在旧服务器执行校验、下载到 Windows、
-      然后在 Windows 上执行 <code>05_windows_verify_bundle.ps1</code>。
-      如果任何一步失败，把 <code>90_DEEP_TROUBLESHOOTING_FOR_LLM.html</code> 和终端输出一起发回来。” 
+      “请先打开 <code>00_START_HERE_EXPORTER.html</code>。如果想最快，直接用 <code>01_WORKBENCH_DIRECT_PASTE.txt</code>。
+      导出后别停，继续按页面说明把 <code>.tar.gz</code> 和同名 <code>.sha256</code> 下载到 Windows，再做校验。
+      如果任何一步失败，把 <code>90_DEEP_TROUBLESHOOTING_FOR_LLM.html</code> 和终端输出一起发回来。”
     </p>
   </div>
 </main>
