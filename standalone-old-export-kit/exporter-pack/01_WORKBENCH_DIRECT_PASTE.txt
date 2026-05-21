@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 set -Eeuo pipefail
 
 ###############################################################################
@@ -16,7 +16,6 @@ export RELEASE_DIR="/opt/wailearning-old-system/current"
 export OUT_DIR="/root/wailearning-migration"
 export EXTRA_UPLOAD_DIRS=""
 
-cat >/tmp/standalone_old_export.sh <<'WAILEARNING_EXPORT_SCRIPT'
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
@@ -32,6 +31,7 @@ RELEASE_DIR="${RELEASE_DIR:-/opt/wailearning-old-system/current}"
 OUT_DIR="${OUT_DIR:-/root/wailearning-migration}"
 LABEL="${LABEL:-old-to-new-$(date +%Y%m%d%H%M%S)}"
 EXTRA_UPLOAD_DIRS="${EXTRA_UPLOAD_DIRS:-}"
+ATTACHMENT_SEARCH_ROOTS="${ATTACHMENT_SEARCH_ROOTS:-/opt:/root:/var/www:/srv}"
 ALLOW_NON_ROOT="${ALLOW_NON_ROOT:-0}"
 
 WORK_DIR="${OUT_DIR}/${LABEL}"
@@ -216,7 +216,7 @@ LIMIT 1" 2>/dev/null || true)"
 
   if [ "${has_url}" != "1" ]; then
     echo "跳过附件引用表：${table}，缺少 attachment_url 字段" \
-      >> "${WORK_DIR}/attachment-references.tsv"
+      >> "${WORK_DIR}/attachment-reference-warnings.txt"
     return 0
   fi
 
@@ -233,11 +233,223 @@ LIMIT 1" 2>/dev/null || true)"
     name_expr="''"
   fi
 
-  psql "${DATABASE_URL}" -Atc "
+  psql "${DATABASE_URL}" -AtF $'\t' -c "
 SELECT '${table}', id::text, ${name_expr}, COALESCE(attachment_url, '')
 FROM ${table}
 WHERE attachment_url IS NOT NULL AND attachment_url <> ''
 ORDER BY id" >> "${WORK_DIR}/attachment-references.tsv" || true
+}
+
+sanitize_path_part() {
+  local value="$1"
+  value="${value//[^A-Za-z0-9._-]/_}"
+  if [ -z "${value}" ]; then
+    value="unknown"
+  fi
+  printf '%s' "${value}"
+}
+
+normalize_attachment_path() {
+  local raw="$1"
+  raw="${raw%$'\r'}"
+  raw="${raw#\"}"
+  raw="${raw%\"}"
+  raw="${raw#\'}"
+  raw="${raw%\'}"
+  raw="${raw%%\#*}"
+  raw="${raw%%\?*}"
+  raw="${raw//\\//}"
+
+  if [[ "${raw}" =~ ^https?://[^/]+(/.*)$ ]]; then
+    raw="${BASH_REMATCH[1]}"
+  elif [[ "${raw}" =~ ^//[^/]+(/.*)$ ]]; then
+    raw="${BASH_REMATCH[1]}"
+  elif [[ "${raw}" =~ ^file://(.*)$ ]]; then
+    raw="${BASH_REMATCH[1]}"
+  fi
+
+  printf '%s' "${raw}"
+}
+
+try_candidate_file() {
+  local candidate="$1"
+  if [ -n "${candidate}" ] && [ -f "${candidate}" ]; then
+    printf '%s' "${candidate}"
+    return 0
+  fi
+  return 1
+}
+
+build_local_file_index() {
+  local index_file="${WORK_DIR}/local-file-index.tsv"
+  local root
+  : > "${index_file}"
+
+  IFS=':' read -r -a search_roots <<< "${ATTACHMENT_SEARCH_ROOTS}"
+  for root in "${search_roots[@]}"; do
+    if [ -z "${root}" ] || [ ! -d "${root}" ]; then
+      continue
+    fi
+    find "${root}" \
+      \( -path "${OUT_DIR}" -o -path "${OUT_DIR}/*" \) -prune -o \
+      -type f -printf '%f\t%p\n' 2>/dev/null >> "${index_file}" || true
+  done
+
+  sort -u "${index_file}" -o "${index_file}" 2>/dev/null || true
+}
+
+lookup_indexed_file() {
+  local basename_value="$1"
+  local normalized_path="$2"
+  local index_file="${WORK_DIR}/local-file-index.tsv"
+  local matches_file="${WORK_DIR}/local-file-index-matches.tmp"
+  local match_count
+  local preferred
+
+  if [ -z "${basename_value}" ] || [ ! -s "${index_file}" ]; then
+    return 1
+  fi
+
+  awk -F '\t' -v b="${basename_value}" '$1 == b { print $2 }' "${index_file}" > "${matches_file}" || true
+  if [ ! -s "${matches_file}" ]; then
+    return 1
+  fi
+
+  if [ -n "${normalized_path}" ]; then
+    preferred="$(awk -v suffix="${normalized_path#/}" 'index($0, suffix) > 0 { print; exit }' "${matches_file}")"
+    if [ -n "${preferred}" ]; then
+      printf '%s' "${preferred}"
+      return 0
+    fi
+  fi
+
+  match_count="$(wc -l < "${matches_file}" | tr -d ' ')"
+  if [ "${match_count}" = "1" ]; then
+    head -n 1 "${matches_file}"
+    return 0
+  fi
+
+  return 2
+}
+
+copy_resolved_attachment() {
+  local table="$1"
+  local row_id="$2"
+  local source_path="$3"
+  local stage_root="$4"
+  local safe_table
+  local safe_id
+  local base_name
+  local dest_dir
+  local dest_path
+  local rel_path
+
+  safe_table="$(sanitize_path_part "${table}")"
+  safe_id="$(sanitize_path_part "${row_id}")"
+  base_name="$(basename -- "${source_path}")"
+  if [ -z "${base_name}" ]; then
+    return 1
+  fi
+
+  dest_dir="${stage_root}/recovered-attachments/${safe_table}/${safe_id}"
+  mkdir -p "${dest_dir}"
+  dest_path="${dest_dir}/${base_name}"
+  cp -a "${source_path}" "${dest_path}"
+  rel_path="${dest_path#${WORK_DIR}/uploads-stage/}"
+  printf '%s' "${rel_path}"
+}
+
+resolve_single_attachment() {
+  local raw_url="$1"
+  local normalized
+  local rel
+  local candidate
+  local base_name
+  local parent_dir
+  local result
+
+  normalized="$(normalize_attachment_path "${raw_url}")"
+  if [ -z "${normalized}" ]; then
+    return 1
+  fi
+
+  if [[ "${normalized}" = /* ]]; then
+    if result="$(try_candidate_file "${normalized}")"; then
+      printf '%s' "${result}"
+      return 0
+    fi
+    rel="${normalized#/}"
+  else
+    rel="${normalized}"
+  fi
+
+  parent_dir="$(dirname "${RELEASE_DIR}")"
+  for candidate in \
+    "${RELEASE_DIR}/${rel}" \
+    "${parent_dir}/${rel}" \
+    "${parent_dir}/shared/${rel}" \
+    "/opt/${APP_NAME}/${rel}" \
+    "/opt/${APP_NAME}/shared/${rel}" \
+    "/opt/dd-class/${rel}" \
+    "/opt/dd-class/shared/${rel}" \
+    "/root/${rel}" \
+    "/var/www/${rel}" \
+    "/srv/${rel}"
+  do
+    if result="$(try_candidate_file "${candidate}")"; then
+      printf '%s' "${result}"
+      return 0
+    fi
+  done
+
+  base_name="$(basename -- "${rel}")"
+  if result="$(lookup_indexed_file "${base_name}" "${normalized}")"; then
+    printf '%s' "${result}"
+    return 0
+  fi
+
+  return 1
+}
+
+resolve_attachment_reference_files() {
+  local stage_root="$1"
+  local found_file="${WORK_DIR}/attachment-files-found.tsv"
+  local missing_file="${WORK_DIR}/attachment-files-missing.tsv"
+  local table
+  local row_id
+  local attachment_name
+  local attachment_url
+  local source_path
+  local packed_path
+  local found_count=0
+  local missing_count=0
+
+  : > "${found_file}"
+  : > "${missing_file}"
+
+  if [ ! -s "${WORK_DIR}/attachment-references.tsv" ]; then
+    return 0
+  fi
+
+  build_local_file_index
+
+  while IFS=$'\t' read -r table row_id attachment_name attachment_url || [ -n "${table}${row_id}${attachment_name}${attachment_url}" ]; do
+    if [ -z "${attachment_url}" ]; then
+      continue
+    fi
+
+    if source_path="$(resolve_single_attachment "${attachment_url}")"; then
+      packed_path="$(copy_resolved_attachment "${table}" "${row_id}" "${source_path}" "${stage_root}")"
+      printf '%s\t%s\t%s\t%s\t%s\t%s\n' "${table}" "${row_id}" "${attachment_name}" "${attachment_url}" "${source_path}" "${packed_path}" >> "${found_file}"
+      found_count=$((found_count + 1))
+    else
+      printf '%s\t%s\t%s\t%s\t%s\n' "${table}" "${row_id}" "${attachment_name}" "${attachment_url}" "not_found_on_local_server" >> "${missing_file}"
+      missing_count=$((missing_count + 1))
+    fi
+  done < "${WORK_DIR}/attachment-references.tsv"
+
+  rm -f "${WORK_DIR}/local-file-index.tsv" "${WORK_DIR}/local-file-index-matches.tmp"
+  echo "附件引用本地文件匹配：找到 ${found_count} 个，未找到 ${missing_count} 个。" | tee "${WORK_DIR}/attachment-resolution-summary.txt"
 }
 
 write_table_counts() {
@@ -342,6 +554,9 @@ write_internal_checksums() {
     "${WORK_DIR}/old-uploads.tar.gz" \
     "${WORK_DIR}/db-table-counts.tsv" \
     "${WORK_DIR}/attachment-references.tsv" \
+    "${WORK_DIR}/attachment-reference-warnings.txt" \
+    "${WORK_DIR}/attachment-files-found.tsv" \
+    "${WORK_DIR}/attachment-files-missing.tsv" \
     "${WORK_DIR}/upload-relative-inventory.txt"
   do
     if [ ! -f "${path}" ]; then
@@ -370,6 +585,9 @@ uploads_archive=old-uploads.tar.gz
 upload_roots_list=upload-roots-included.txt
 upload_relative_inventory=upload-relative-inventory.txt
 attachment_references=attachment-references.tsv
+attachment_reference_warnings=attachment-reference-warnings.txt
+attachment_files_found=attachment-files-found.tsv
+attachment_files_missing=attachment-files-missing.tsv
 table_counts=db-table-counts.tsv
 internal_checksums=checksums.sha256
 MANIFEST_EOF
@@ -388,6 +606,9 @@ write_readme() {
 - upload-roots-included.txt：实际被扫描/收集的附件目录。
 - upload-relative-inventory.txt：打包进 old-uploads.tar.gz 的相对文件清单。
 - attachment-references.tsv：数据库里记录的附件引用。
+- attachment-reference-warnings.txt：附件引用扫描时的非致命提示，例如候选表不存在附件字段。
+- attachment-files-found.tsv：数据库附件引用中，已在旧服务器本地找到并打包的文件。
+- attachment-files-missing.tsv：数据库有引用，但本脚本没有在旧服务器本地找到真实文件的清单。
 - db-table-counts.tsv：导出时的表统计，用于迁移后粗略核对。
 - checksums.sha256：导出包内部关键文件的 SHA256。
 - runtime.txt：导出机器和工具版本。
@@ -449,16 +670,19 @@ collect_upload_dirs "${UPLOADS_STAGE}"
 if [ ! -d "${UPLOADS_STAGE}" ]; then
   mkdir -p "${UPLOADS_STAGE}"
 fi
-tar -czf "${WORK_DIR}/old-uploads.tar.gz" -C "${WORK_DIR}/uploads-stage" uploads
-write_upload_inventory "${UPLOADS_STAGE}"
 
 echo "开始导出附件引用和表统计。"
 : > "${WORK_DIR}/attachment-references.tsv"
+: > "${WORK_DIR}/attachment-reference-warnings.txt"
 append_attachment_refs "homeworks"
 append_attachment_refs "homework_submissions"
 append_attachment_refs "course_materials"
 append_attachment_refs "materials"
 append_attachment_refs "notifications"
+echo "开始根据附件引用反查旧服务器本地文件。"
+resolve_attachment_reference_files "${UPLOADS_STAGE}"
+tar -czf "${WORK_DIR}/old-uploads.tar.gz" -C "${WORK_DIR}/uploads-stage" uploads
+write_upload_inventory "${UPLOADS_STAGE}"
 write_table_counts
 
 echo "保存旧系统运行配置快照。"
@@ -479,6 +703,13 @@ ls -lh "${BUNDLE_PATH}" 2>/dev/null || true
 if [ -f "${BUNDLE_SHA256_PATH}" ]; then
   echo "SHA256：${BUNDLE_SHA256_PATH}"
 fi
+attachment_ref_count="$(grep -cve '^[[:space:]]*$' "${WORK_DIR}/attachment-references.tsv" 2>/dev/null || true)"
+attachment_found_count="$(grep -cve '^[[:space:]]*$' "${WORK_DIR}/attachment-files-found.tsv" 2>/dev/null || true)"
+attachment_missing_count="$(grep -cve '^[[:space:]]*$' "${WORK_DIR}/attachment-files-missing.tsv" 2>/dev/null || true)"
+echo "附件引用检查：引用 ${attachment_ref_count} 条，已找到并打包 ${attachment_found_count} 条，未找到真实文件 ${attachment_missing_count} 条。"
+if [ "${attachment_missing_count}" != "0" ]; then
+  echo "注意：attachment-files-missing.tsv 中的附件没有真正下载/打包，只记录了数据库引用；如果这些文件在 OSS/CDN/另一台服务器，需要后续人工补齐。"
+fi
 echo "建议下一步："
 echo "1. 先在旧服务器运行 verify_export_bundle.sh 校验导出包。"
 echo "2. 下载 ${BUNDLE_PATH} 到 Windows。"
@@ -493,7 +724,7 @@ set -Eeuo pipefail
 BUNDLE_PATH="${1:-${BUNDLE_PATH:-}}"
 
 if [ -z "${BUNDLE_PATH}" ]; then
-  echo "用法：bash /tmp/verify_export_bundle.sh /root/wailearning-migration/old-to-new-20260521120000.tar.gz"
+  echo "用法：bash scripts/verify_export_bundle.sh /root/wailearning-migration/old-to-new-20260521120000.tar.gz"
   exit 1
 fi
 
@@ -543,6 +774,9 @@ required_files=(
   "upload-roots-included.txt"
   "upload-relative-inventory.txt"
   "attachment-references.tsv"
+  "attachment-reference-warnings.txt"
+  "attachment-files-found.tsv"
+  "attachment-files-missing.tsv"
   "db-table-counts.tsv"
   "runtime.txt"
 )
@@ -601,6 +835,8 @@ bundle_sha256="$(compute_sha256 "${BUNDLE_PATH}" || true)"
 bundle_size="$(du -h "${BUNDLE_PATH}" | awk '{print $1}')"
 upload_count="$(wc -l < "${ROOT_DIR}/upload-relative-inventory.txt" | tr -d ' ')"
 attachment_ref_count="$(grep -cve '^[[:space:]]*$' "${ROOT_DIR}/attachment-references.tsv" || true)"
+attachment_found_count="$(grep -cve '^[[:space:]]*$' "${ROOT_DIR}/attachment-files-found.tsv" || true)"
+attachment_missing_count="$(grep -cve '^[[:space:]]*$' "${ROOT_DIR}/attachment-files-missing.tsv" || true)"
 
 echo "通过：迁移包结构和内部压缩包可读取。"
 echo "大小：${bundle_size}"
@@ -609,6 +845,11 @@ if [ -n "${bundle_sha256}" ]; then
 fi
 echo "附件文件数：${upload_count}"
 echo "附件引用行数：${attachment_ref_count}"
+echo "附件引用已找到并打包：${attachment_found_count}"
+echo "附件引用未找到真实文件：${attachment_missing_count}"
+if [ "${attachment_missing_count}" != "0" ]; then
+  echo "注意：attachment-files-missing.tsv 中的附件没有真正下载/打包，只记录了数据库引用。"
+fi
 echo "根目录：${ROOT_DIR##*/}"
 WAILEARNING_VERIFY_SCRIPT
 

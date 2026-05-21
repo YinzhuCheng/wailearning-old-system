@@ -87,7 +87,7 @@
       <li>Workbench 最近 200 行输出</li>
       <li><code>03_standalone_old_export.sh</code></li>
       <li><code>04_verify_export_bundle.sh</code> 的输出</li>
-      <li>若包已生成，再加上 <code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code></li>
+      <li>若包已生成，再加上 <code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code>、<code>attachment-files-missing.tsv</code></li>
       <li>若已导入，再加 <code>06_post_import_verify.sh</code> 的输出</li>
     </ul>
   </div>
@@ -108,6 +108,7 @@
       <li>下载后没有在 Windows 本地跑校验，误以为“文件下载完成”就等于“包可用”。</li>
       <li>用会话管理连接去找文件管理功能，结果根本没有下载入口。</li>
       <li>只看数据库里的附件 URL，不看落盘文件是否真的存在。</li>
+      <li>忽略 <code>attachment-files-missing.tsv</code>，误以为所有外部附件都已经打进包里。</li>
     </ul>
   </div>
 
@@ -130,6 +131,7 @@
       <li>说明故障发生在主流程哪一步。</li>
       <li>附上最近 200 行终端输出。</li>
       <li>如果已经生成包，附上清单文件和校验文件。</li>
+      <li>如果附件不完整，附上 <code>attachment-files-found.tsv</code> 和 <code>attachment-files-missing.tsv</code>。</li>
       <li>如果是 Windows 下载问题，附上下载路径和 <code>05_windows_verify_bundle.ps1</code> 的输出。</li>
     </ul>
   </div>

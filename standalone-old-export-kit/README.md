@@ -44,5 +44,8 @@
 ## 注意
 
 - `old-env-file` 可能包含密码、密钥和部署路径，不要外发。
-- `attachment-references.tsv` 记录的是数据库里的 URL，不代表文件已经落盘。
+- `attachment-references.tsv` 记录的是数据库里的附件 URL。
+- `attachment-reference-warnings.txt` 记录附件引用扫描时的非致命提示，例如候选表不存在附件字段。
+- `attachment-files-found.tsv` 记录已经根据附件引用在旧服务器本地找到并打包的文件。
+- `attachment-files-missing.tsv` 记录数据库有引用但脚本没有在旧服务器本地找到真实文件的附件；这些文件可能在 OSS、CDN、另一台服务器，或需要人工补齐。
 - `course_enrollments` 这类派生数据，验证标准是“不少于旧库”，不是严格相等。

@@ -123,6 +123,20 @@
     如果命令里的时间戳不同，用你终端实际看到的那一条。
   </p>
 
+  <h2>附件是否真的打包了</h2>
+  <p>
+    导出脚本会先打包旧服务器本地常见的 <code>uploads</code> 目录，再根据数据库里的附件引用反查真实文件路径。
+    能在旧服务器本地找到的文件会继续打包；找不到的不会让导出失败，但会写入缺失清单。
+  </p>
+  <ul>
+    <li><code>attachment-files-found.tsv</code>：已经找到并打包的附件。</li>
+    <li><code>attachment-files-missing.tsv</code>：数据库有引用，但旧服务器本地没找到真实文件的附件。</li>
+    <li><code>attachment-reference-warnings.txt</code>：附件引用扫描时的非致命提示，不等于附件缺失。</li>
+  </ul>
+  <p>
+    如果导出结束时提示“未找到真实文件”大于 0，说明这些附件没有真正下载/打包，可能在 OSS、CDN、另一台服务器，或需要后续人工补齐。
+  </p>
+
   <div class="callout warn">
     <strong>关键提醒：</strong>“导出完成”只表示旧服务器生成包，不表示文件已经到 Windows。
     “下载到 Windows”是主流程的一部分；Windows 本地校验是可选推荐检查。
@@ -143,7 +157,7 @@
     <li>主脚本：<code>03_standalone_old_export.sh</code>。</li>
     <li>旧服务器校验脚本：<code>04_verify_export_bundle.sh</code>。</li>
     <li>Workbench 最近 200 行输出。</li>
-    <li>如果已经生成包，再带上 <code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code>。</li>
+    <li>如果已经生成包，再带上 <code>manifest.txt</code>、<code>db-table-counts.tsv</code>、<code>upload-roots-included.txt</code>、<code>attachment-files-missing.tsv</code>。</li>
     <li>复杂排障页：<a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>。</li>
   </ul>
 

@@ -54,6 +54,9 @@ required_files=(
   "upload-roots-included.txt"
   "upload-relative-inventory.txt"
   "attachment-references.tsv"
+  "attachment-reference-warnings.txt"
+  "attachment-files-found.tsv"
+  "attachment-files-missing.tsv"
   "db-table-counts.tsv"
   "runtime.txt"
 )
@@ -112,6 +115,8 @@ bundle_sha256="$(compute_sha256 "${BUNDLE_PATH}" || true)"
 bundle_size="$(du -h "${BUNDLE_PATH}" | awk '{print $1}')"
 upload_count="$(wc -l < "${ROOT_DIR}/upload-relative-inventory.txt" | tr -d ' ')"
 attachment_ref_count="$(grep -cve '^[[:space:]]*$' "${ROOT_DIR}/attachment-references.tsv" || true)"
+attachment_found_count="$(grep -cve '^[[:space:]]*$' "${ROOT_DIR}/attachment-files-found.tsv" || true)"
+attachment_missing_count="$(grep -cve '^[[:space:]]*$' "${ROOT_DIR}/attachment-files-missing.tsv" || true)"
 
 echo "通过：迁移包结构和内部压缩包可读取。"
 echo "大小：${bundle_size}"
@@ -120,4 +125,9 @@ if [ -n "${bundle_sha256}" ]; then
 fi
 echo "附件文件数：${upload_count}"
 echo "附件引用行数：${attachment_ref_count}"
+echo "附件引用已找到并打包：${attachment_found_count}"
+echo "附件引用未找到真实文件：${attachment_missing_count}"
+if [ "${attachment_missing_count}" != "0" ]; then
+  echo "注意：attachment-files-missing.tsv 中的附件没有真正下载/打包，只记录了数据库引用。"
+fi
 echo "根目录：${ROOT_DIR##*/}"
