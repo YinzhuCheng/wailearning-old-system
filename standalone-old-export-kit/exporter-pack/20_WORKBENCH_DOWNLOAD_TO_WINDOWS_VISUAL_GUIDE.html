@@ -83,17 +83,17 @@
   <div class="callout warn">
     <strong>先说清楚：</strong>
     <ul>
-      <li>代码流只负责在旧服务器上生成迁移包和 <code>.sha256</code>；它不会自动把文件写到你的 Windows 电脑。</li>
+      <li>代码流只负责在旧服务器上生成迁移包；它不会自动把文件写到你的 Windows 电脑。</li>
       <li><code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code> 里的“下载脚本”，指的是旧服务器从 GitHub 下载导出脚本，不是自动下载迁移包到 Windows。</li>
       <li>从旧服务器到 Windows 这一步，需要用 Workbench 文件管理器手工下载，或在 Windows 上另行使用 <code>scp/sftp/rsync</code>、OSS 等方式取回文件。</li>
     </ul>
   </div>
 
   <div class="callout note">
-    <strong>先确认旧服务器上已经有这两个文件：</strong>
+    <strong>先确认旧服务器上已经有迁移包：</strong>
     <pre><code>/root/wailearning-migration/old-to-new-YYYYMMDDHHMMSS.tar.gz
 /root/wailearning-migration/old-to-new-YYYYMMDDHHMMSS.tar.gz.sha256</code></pre>
-    这里的 <code>/root/wailearning-migration</code> 是默认导出目录。若脚本输出了不同路径，或你改过 <code>OUT_DIR</code>，以后都以脚本最后打印出来的实际路径为准。
+    这里的 <code>.tar.gz</code> 是必须下载的迁移包；<code>.sha256</code> 是可选哈希校验文件。<code>/root/wailearning-migration</code> 是默认导出目录。若脚本输出了不同路径，或你改过 <code>OUT_DIR</code>，以后都以脚本最后打印出来的实际路径为准。
   </div>
 
   <h2>阿里云官方依据</h2>
@@ -116,7 +116,8 @@
     <li>如果是 Workbench 2.0，在左侧菜单栏点击文件管理图标，进入文件管理页面。</li>
     <li>如果是 Workbench 1.0，在顶部菜单栏选择“文件” -> “打开新文件树”。如果你看不到顶部菜单，可在终端区域右键尝试显示菜单栏。</li>
     <li>在文件树里找到导出目录，通常是 <code>/root/wailearning-migration</code>。</li>
-    <li>对这两个文件分别执行“下载”：<code>.tar.gz</code> 和 <code>.sha256</code>。Workbench 2.0 可以在右侧文件操作里点“下载”，也可以在左侧文件树右键下载；Workbench 1.0 通常是在文件树中右键文件并选择“下载文件”。</li>
+    <li>对 <code>.tar.gz</code> 执行“下载”。Workbench 2.0 可以在右侧文件操作里点“下载”，也可以在左侧文件树右键下载；Workbench 1.0 通常是在文件树中右键文件并选择“下载文件”。</li>
+    <li>可选：如果你想做哈希校验，再用同样方式下载同名 <code>.sha256</code> 文件。</li>
     <li>把它们放到 Windows 的一个短路径目录里，例如 <code>C:\Users\you\Downloads\wailearning\</code>。这里的 <code>you</code> 只是示例，换成你当前 Windows 用户名或你实际保存的位置。</li>
     <li>按下面“Windows 本地校验怎么运行”执行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a>。</li>
   </ol>
@@ -124,7 +125,7 @@
   <div class="callout warn">
     <strong>最容易踩的坑：</strong>
     <ul>
-      <li>不要只下载 <code>.tar.gz</code>，不带 <code>.sha256</code> 就无法确认是否损坏。</li>
+      <li>不要把可选哈希校验当成主流程卡点。默认先把 <code>.tar.gz</code> 下载到 Windows 并跑本地校验；如果校验失败或你想加强确认，再下载同名 <code>.sha256</code> 做哈希比对。</li>
       <li>不要在 Workbench 里粘贴很长的本地路径，路径太长时容易自动换行。</li>
       <li>如果看不到文件下载入口，先检查连接方式（终端连接 vs 会话管理），不要先怀疑脚本。</li>
       <li>如果迁移包很大，Workbench 文件下载可能会受限或很慢。优先按“能下载就用 Workbench”，否则看下面“下载失败怎么办”。</li>
@@ -142,27 +143,34 @@
   <ol>
     <li>在 Windows 上打开 PowerShell。</li>
     <li>切到这个工具包的 <code>exporter-pack</code> 目录，也就是 <code>05_windows_verify_bundle.ps1</code> 所在目录。</li>
-    <li>把下面命令里的两个文件路径，改成你刚下载到 Windows 的真实 <code>.tar.gz</code> 和 <code>.sha256</code> 路径。</li>
+    <li>把下面命令里的迁移包路径，改成你刚下载到 Windows 的真实 <code>.tar.gz</code> 路径。</li>
   </ol>
 
   <div class="callout note">
     <strong>推荐写法：先进入脚本目录，再运行脚本。</strong>
     <pre><code>powershell -ExecutionPolicy Bypass -File .\05_windows_verify_bundle.ps1 `
-  -BundlePath C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz `
-  -Sha256File C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz.sha256</code></pre>
+  -BundlePath C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz</code></pre>
     这条命令里的 <code>.\05_windows_verify_bundle.ps1</code> 表示“当前目录下的脚本”。如果你没有先切到 <code>exporter-pack</code>，就要把 <code>-File</code> 后面改成脚本的完整路径。
   </div>
 
   <div class="callout note">
     <strong>完整路径写法：不切目录也能运行。</strong>
     <pre><code>powershell -ExecutionPolicy Bypass -File C:\path\to\exporter-pack\05_windows_verify_bundle.ps1 `
-  -BundlePath C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz `
-  -Sha256File C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz.sha256</code></pre>
+  -BundlePath C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz</code></pre>
     把 <code>C:\path\to\exporter-pack\05_windows_verify_bundle.ps1</code> 换成你这份工具包里脚本的真实位置。
   </div>
 
+  <h2 id="optional-hash-check">可选：哈希校验</h2>
+  <p>
+    如果你同时下载了同名 <code>.sha256</code> 文件，可以把它传给 <code>05_windows_verify_bundle.ps1</code> 做 SHA256 比对。
+    这一步能更明确地判断下载过程中有没有损坏；如果你嫌麻烦，也可以先跳过，出错时重新导出或重新下载。
+  </p>
+  <pre><code>powershell -ExecutionPolicy Bypass -File .\05_windows_verify_bundle.ps1 `
+  -BundlePath C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz `
+  -Sha256File C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz.sha256</code></pre>
+
   <div class="callout warn">
-    <strong>看到“校验通过”才算完成：</strong>脚本会检查迁移包是否存在、文件大小是否为 0、SHA256 是否匹配，并在 Windows 自带 <code>tar.exe</code> 可用时尝试读取压缩包目录。
+    <strong>看到“校验通过”才算完成：</strong>脚本会检查迁移包是否存在、文件大小是否为 0，并在 Windows 自带 <code>tar.exe</code> 可用时尝试读取压缩包目录；如果传了 <code>-Sha256File</code>，还会额外比对 SHA256。
   </div>
 </main>
 </body>

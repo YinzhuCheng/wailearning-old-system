@@ -7,7 +7,7 @@ set -Eeuo pipefail
 # 1. 在阿里云 Workbench 用 root 登录旧系统服务器。
 # 2. 通常不需要改任何内容；如路径特殊，只改下面 5 个变量。
 # 3. 整个文件复制到 Workbench，按回车即可导出 tar.gz 迁移包。
-# 4. 导出完成后，还要把迁移包和 .sha256 下载到 Windows，再做本地校验。
+# 4. 导出完成后，还要把迁移包下载到 Windows，再做本地校验；.sha256 可选用于哈希校验。
 ###############################################################################
 
 export APP_NAME="wailearning-old-system"
@@ -395,8 +395,8 @@ write_readme() {
 
 建议流程：
 1. 在旧服务器先校验本包，再下载到 Windows。
-2. 下载时同时取走外层 tar.gz 和同目录下的 tar.gz.sha256。
-3. Windows 上用 Get-FileHash 或 windows_verify_bundle.ps1 校验下载文件。
+2. 下载外层 tar.gz 到 Windows；同目录下的 tar.gz.sha256 可选用于哈希校验。
+3. Windows 上用 windows_verify_bundle.ps1 校验下载文件；需要加强校验时再传入 .sha256。
 4. 把整个 tar.gz 上传到新系统服务器。
 5. 用新系统迁移导入脚本恢复 old-system.dump。
 6. 解压 old-uploads.tar.gz 到新系统 UPLOADS_DIR 的父目录。
@@ -481,8 +481,9 @@ if [ -f "${BUNDLE_SHA256_PATH}" ]; then
 fi
 echo "建议下一步："
 echo "1. 先在旧服务器运行 verify_export_bundle.sh 校验导出包。"
-echo "2. 下载 ${BUNDLE_PATH} 和 ${BUNDLE_SHA256_PATH} 到 Windows。"
-echo "3. Windows 上校验 SHA256 后，再上传到新系统服务器导入。"
+echo "2. 下载 ${BUNDLE_PATH} 到 Windows。"
+echo "3. 可选：同时下载 ${BUNDLE_SHA256_PATH} 做哈希校验。"
+echo "4. Windows 上运行 05_windows_verify_bundle.ps1 校验后，再上传到新系统服务器导入。"
 WAILEARNING_EXPORT_SCRIPT
 
 cat >/tmp/verify_export_bundle.sh <<'WAILEARNING_VERIFY_SCRIPT'
@@ -620,9 +621,9 @@ if [ -n "${LATEST_BUNDLE}" ]; then
   echo "建议立即校验导出包："
   echo "bash /tmp/verify_export_bundle.sh ${LATEST_BUNDLE}"
   echo
-  echo "然后把这两个文件下载到 Windows："
+  echo "然后把迁移包下载到 Windows："
   echo "1. ${LATEST_BUNDLE}"
-  echo "2. ${LATEST_BUNDLE}.sha256"
+  echo "可选：${LATEST_BUNDLE}.sha256（用于哈希校验）"
   echo
-  echo "Windows 下载后，请用 windows_verify_bundle.ps1 或 Get-FileHash 校验。"
+  echo "Windows 下载后，请用 05_windows_verify_bundle.ps1 校验。"
 fi

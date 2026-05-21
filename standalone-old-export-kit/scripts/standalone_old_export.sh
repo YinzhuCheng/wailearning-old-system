@@ -376,8 +376,8 @@ write_readme() {
 
 建议流程：
 1. 在旧服务器先校验本包，再下载到 Windows。
-2. 下载时同时取走外层 tar.gz 和同目录下的 tar.gz.sha256。
-3. Windows 上用 Get-FileHash 或 windows_verify_bundle.ps1 校验下载文件。
+2. 下载外层 tar.gz 到 Windows；同目录下的 tar.gz.sha256 可选用于哈希校验。
+3. Windows 上用 windows_verify_bundle.ps1 校验下载文件；需要加强校验时再传入 .sha256。
 4. 把整个 tar.gz 上传到新系统服务器。
 5. 用新系统迁移导入脚本恢复 old-system.dump。
 6. 解压 old-uploads.tar.gz 到新系统 UPLOADS_DIR 的父目录。
@@ -462,5 +462,6 @@ if [ -f "${BUNDLE_SHA256_PATH}" ]; then
 fi
 echo "建议下一步："
 echo "1. 先在旧服务器运行 verify_export_bundle.sh 校验导出包。"
-echo "2. 下载 ${BUNDLE_PATH} 和 ${BUNDLE_SHA256_PATH} 到 Windows。"
-echo "3. Windows 上校验 SHA256 后，再上传到新系统服务器导入。"
+echo "2. 下载 ${BUNDLE_PATH} 到 Windows。"
+echo "3. 可选：同时下载 ${BUNDLE_SHA256_PATH} 做哈希校验。"
+echo "4. Windows 上运行 05_windows_verify_bundle.ps1 校验后，再上传到新系统服务器导入。"

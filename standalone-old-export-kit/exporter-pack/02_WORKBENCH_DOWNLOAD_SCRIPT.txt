@@ -7,7 +7,7 @@ set -Eeuo pipefail
 # 1. 在阿里云 Workbench 用 root 登录旧系统服务器。
 # 2. 通常不需要改任何内容；如路径特殊，只改下面几个变量。
 # 3. 整段复制到 Workbench，按回车即可从公开 GitHub 下载脚本并导出。
-# 4. 导出完成后，还要把迁移包和 .sha256 下载到 Windows，再做本地校验。
+# 4. 导出完成后，还要把迁移包下载到 Windows，再做本地校验；.sha256 可选用于哈希校验。
 ###############################################################################
 
 export APP_NAME="wailearning-old-system"
@@ -78,9 +78,9 @@ if [ -n "${LATEST_BUNDLE}" ]; then
   echo "建议立即校验导出包："
   echo "bash ${REMOTE_VERIFY_SCRIPT} ${LATEST_BUNDLE}"
   echo
-  echo "然后把这两个文件下载到 Windows："
+  echo "然后把迁移包下载到 Windows："
   echo "1. ${LATEST_BUNDLE}"
-  echo "2. ${LATEST_BUNDLE}.sha256"
+  echo "可选：${LATEST_BUNDLE}.sha256（用于哈希校验）"
   echo
-  echo "Windows 下载后，请用 windows_verify_bundle.ps1 或 Get-FileHash 校验。"
+  echo "Windows 下载后，请用 05_windows_verify_bundle.ps1 校验。"
 fi
