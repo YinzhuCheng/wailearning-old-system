@@ -80,10 +80,20 @@
     这里不再画复杂流程图，只保留最稳的步骤。
   </p>
 
+  <div class="callout warn">
+    <strong>先说清楚：</strong>
+    <ul>
+      <li>代码流只负责在旧服务器上生成迁移包和 <code>.sha256</code>；它不会自动把文件写到你的 Windows 电脑。</li>
+      <li><code>02_WORKBENCH_DOWNLOAD_SCRIPT.txt</code> 里的“下载脚本”，指的是旧服务器从 GitHub 下载导出脚本，不是自动下载迁移包到 Windows。</li>
+      <li>从旧服务器到 Windows 这一步，需要用 Workbench 文件管理器手工下载，或在 Windows 上另行使用 <code>scp/sftp</code>、OSS 等方式取回文件。</li>
+    </ul>
+  </div>
+
   <div class="callout note">
-    <strong>先确认你已经有这两个文件：</strong>
+    <strong>先确认旧服务器上已经有这两个文件：</strong>
     <pre><code>/root/wailearning-migration/old-to-new-YYYYMMDDHHMMSS.tar.gz
 /root/wailearning-migration/old-to-new-YYYYMMDDHHMMSS.tar.gz.sha256</code></pre>
+    这里的 <code>/root/wailearning-migration</code> 是默认导出目录。若脚本输出了不同路径，或你改过 <code>OUT_DIR</code>，以后都以脚本最后打印出来的实际路径为准。
   </div>
 
   <h2>最稳的下载方式</h2>
@@ -92,7 +102,7 @@
     <li>在 Workbench 打开文件管理器（不同版本入口可能不同；如果你看不到顶部菜单，可在终端区域右键尝试显示菜单栏）。</li>
     <li>在文件树里找到导出目录，通常是 <code>/root/wailearning-migration</code>。</li>
     <li>对这两个文件分别执行“下载”（右键文件 -> 下载）：<code>.tar.gz</code> 和 <code>.sha256</code>。</li>
-    <li>把它们放到 Windows 的一个短路径目录里，例如 <code>C:\Users\you\Downloads\wailearning\</code>。</li>
+    <li>把它们放到 Windows 的一个短路径目录里，例如 <code>C:\Users\you\Downloads\wailearning\</code>。这里的 <code>you</code> 只是示例，换成你当前 Windows 用户名或你实际保存的位置。</li>
     <li>运行 <a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a> 做本地校验。</li>
   </ol>
 
@@ -118,6 +128,7 @@
     <pre><code>powershell -ExecutionPolicy Bypass -File .\05_windows_verify_bundle.ps1 `
   -BundlePath C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz `
   -Sha256File C:\Users\you\Downloads\wailearning\old-to-new-20260521120000.tar.gz.sha256</code></pre>
+    这条命令里的两个 Windows 路径也只是示例。换机器后，把它们改成你实际下载到本机的 <code>.tar.gz</code> 和 <code>.sha256</code> 路径即可。
   </div>
 </main>
 </body>
