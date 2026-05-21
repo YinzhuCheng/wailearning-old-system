@@ -89,7 +89,7 @@
   <h2>最稳的下载方式</h2>
   <ol>
     <li>在 Workbench 里确认自己用的是<strong>终端连接</strong>，不是<strong>会话管理</strong>连接（会话管理通常没有文件管理/下载入口）。</li>
-    <li>在 Workbench 打开文件管理器（常见入口：顶部菜单 <code>File</code> 里打开“文件树/文件管理器”）。</li>
+    <li>在 Workbench 打开文件管理器（不同版本入口可能不同；如果你看不到顶部菜单，可在终端区域右键尝试显示菜单栏）。</li>
     <li>在文件树里找到导出目录，通常是 <code>/root/wailearning-migration</code>。</li>
     <li>对这两个文件分别执行“下载”（右键文件 -> 下载）：<code>.tar.gz</code> 和 <code>.sha256</code>。</li>
     <li>把它们放到 Windows 的一个短路径目录里，例如 <code>C:\Users\you\Downloads\wailearning\</code>。</li>
@@ -108,7 +108,7 @@
 
   <h2>下载失败怎么办</h2>
   <ul>
-    <li><strong>没有文件管理入口：</strong>通常是用了会话管理连接。改用 Workbench 的“终端连接”重连再试。</li>
+    <li><strong>没有文件管理入口：</strong>通常是用了会话管理连接，或菜单栏被隐藏。优先改用 Workbench 的“终端连接”重连；其次在终端区域右键切换“显示/隐藏菜单栏”。</li>
     <li><strong>文件太大/下载很慢：</strong>改用 <code>scp/sftp</code>、或上传到对象存储（OSS）再下载。更详细的兜底方案见 <a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a>。</li>
     <li><strong>权限不足：</strong>请确认是 <code>root</code> 用户，至少能读取导出目录。</li>
   </ul>
