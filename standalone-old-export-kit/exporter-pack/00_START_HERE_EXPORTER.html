@@ -37,7 +37,12 @@
     h2 { margin-top: 34px; font-size: 24px; }
     h3 { margin-top: 22px; font-size: 18px; }
     p, li, td { color: var(--muted); }
-    a { color: var(--accent); text-decoration: none; }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
     a:hover { text-decoration: underline; }
     code, pre {
       font-family: Consolas, "SFMono-Regular", monospace;
@@ -95,6 +100,8 @@
       display: block;
       color: var(--ink);
       margin-bottom: 4px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     .timeline {
       display: grid;
@@ -145,6 +152,8 @@
       border: 1px solid var(--line);
       text-align: left;
       vertical-align: top;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     th {
       background: #f6f9fe;
@@ -211,7 +220,7 @@
 
       <rect x="254" y="176" width="596" height="56" rx="18" fill="#f8fbff" stroke="#dbe4ef" stroke-width="2"/>
       <text x="552" y="212" text-anchor="middle" font-size="18" fill="#55657e" font-family="Microsoft YaHei">
-        如果任何一步失败，把 90_DEEP_TROUBLESHOOTING_FOR_LLM.html 连同终端输出一起交给排障者或 LLM
+        如果失败，把复杂版排障说明和终端输出一起交给排障者或 LLM
       </text>
     </svg>
   </section>
@@ -249,36 +258,32 @@
 
     <div class="panel">
       <h2>这个文件夹里放了什么</h2>
-      <table>
-        <tr>
-          <th>文件</th>
-          <th>作用</th>
-        </tr>
-        <tr>
-          <td><code>03_standalone_old_export.sh</code></td>
-          <td>真正执行导出的主脚本。</td>
-        </tr>
-        <tr>
-          <td><code>04_verify_export_bundle.sh</code></td>
-          <td>检查导出包结构、内部压缩包和 SHA256。</td>
-        </tr>
-        <tr>
-          <td><code>05_windows_verify_bundle.ps1</code></td>
-          <td>Windows 本地核对下载文件。</td>
-        </tr>
-        <tr>
-          <td><code>06_post_import_verify.sh</code></td>
-          <td>新系统导入后做数据库与附件对账。通常给迁移接手者使用。</td>
-        </tr>
-        <tr>
-          <td><code>20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</code></td>
-          <td>Workbench 下载回 Windows 的独立图示说明页。</td>
-        </tr>
-        <tr>
-          <td><code>90_DEEP_TROUBLESHOOTING_FOR_LLM.html</code></td>
-          <td>复杂版说明，包含常见坑、兼容性和排障清单。</td>
-        </tr>
-      </table>
+      <div class="filelist">
+        <div class="file">
+          <strong><a href="./03_standalone_old_export.sh">03_standalone_old_export.sh</a></strong>
+          真正执行导出的主脚本。
+        </div>
+        <div class="file">
+          <strong><a href="./04_verify_export_bundle.sh">04_verify_export_bundle.sh</a></strong>
+          检查导出包结构、内部压缩包和 SHA256。
+        </div>
+        <div class="file">
+          <strong><a href="./05_windows_verify_bundle.ps1">05_windows_verify_bundle.ps1</a></strong>
+          Windows 本地核对下载文件。
+        </div>
+        <div class="file">
+          <strong><a href="./06_post_import_verify.sh">06_post_import_verify.sh</a></strong>
+          新系统导入后做数据库与附件对账。通常给迁移接手者使用。
+        </div>
+        <div class="file">
+          <strong><a href="./20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html">20_WORKBENCH_DOWNLOAD_TO_WINDOWS_VISUAL_GUIDE.html</a></strong>
+          Workbench 下载回 Windows 的独立图示说明页。
+        </div>
+        <div class="file">
+          <strong><a href="./90_DEEP_TROUBLESHOOTING_FOR_LLM.html">90_DEEP_TROUBLESHOOTING_FOR_LLM.html</a></strong>
+          复杂版说明，包含常见坑、兼容性和排障清单。
+        </div>
+      </div>
     </div>
   </section>
 
