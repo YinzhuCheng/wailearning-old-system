@@ -312,6 +312,12 @@ NGINX_EOF
   echo "管理员账号：${INIT_ADMIN_USERNAME}"
   echo "管理员密码：${INIT_ADMIN_PASSWORD}"
   echo "伪数据开关 INIT_DEFAULT_DATA=${INIT_DEFAULT_DATA}"
+  if [ "${INIT_DEFAULT_DATA}" = "true" ]; then
+    echo "旧系统演示账号：old_teacher / demo123456"
+    echo "旧系统班主任演示账号：old_headteacher / demo123456"
+    echo "旧系统学生演示账号：oldstu1 / 111111"
+    echo "旧系统家长端演示码：OLDP001A"
+  fi
   echo "部署日志目录：${LOG_DIR}"
 }
 

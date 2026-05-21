@@ -8,6 +8,7 @@ from app.auth import get_password_hash
 from app.config import settings
 from app.course_access import sync_course_enrollments
 from app.database import Base, SessionLocal, engine
+from app.demo_seed import seed_demo_data
 from app.models import Score, Semester, Subject, SystemSetting, User, UserRole
 
 
@@ -307,6 +308,7 @@ def bootstrap() -> None:
             normalize_semester_catalog(db)
             sync_subject_semester_links(db)
             seed_default_system_settings(db)
+            seed_demo_data(db)
             sync_existing_courses(db)
         else:
             print("INIT_DEFAULT_DATA is false. Table creation completed without seed data.")
