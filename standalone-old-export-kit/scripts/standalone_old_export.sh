@@ -17,6 +17,7 @@ ALLOW_NON_ROOT="${ALLOW_NON_ROOT:-0}"
 
 WORK_DIR="${OUT_DIR}/${LABEL}"
 BUNDLE_PATH="${OUT_DIR}/${LABEL}.tar.gz"
+BUNDLE_SHA256_PATH="${BUNDLE_PATH}.sha256"
 
 on_error() {
   local code="$?"
@@ -60,6 +61,22 @@ ensure_tools() {
   if ! command -v psql >/dev/null 2>&1; then
     echo "警告：未找到 psql，将跳过附件引用清单和表统计。"
   fi
+  if ! command -v sha256sum >/dev/null 2>&1 && ! command -v shasum >/dev/null 2>&1; then
+    echo "警告：未找到 sha256sum/shasum，将跳过 SHA256 校验文件生成。"
+  fi
+}
+
+compute_sha256() {
+  local path="$1"
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "${path}" | awk '{print $1}'
+    return 0
+  fi
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 256 "${path}" | awk '{print $1}'
+    return 0
+  fi
+  return 1
 }
 
 first_existing_file() {
@@ -286,6 +303,41 @@ collect_upload_dirs() {
   done < <(find /opt /root -type d -name uploads 2>/dev/null || true)
 }
 
+write_upload_inventory() {
+  local uploads_stage="$1"
+  if [ ! -d "${uploads_stage}" ]; then
+    : > "${WORK_DIR}/upload-relative-inventory.txt"
+    return 0
+  fi
+  find "${uploads_stage}" -type f | sed "s|^${WORK_DIR}/uploads-stage/||" | LC_ALL=C sort \
+    > "${WORK_DIR}/upload-relative-inventory.txt"
+}
+
+write_internal_checksums() {
+  local checksum_file="${WORK_DIR}/checksums.sha256"
+  local digest
+  : > "${checksum_file}"
+
+  for path in \
+    "${WORK_DIR}/old-system.dump" \
+    "${WORK_DIR}/old-uploads.tar.gz" \
+    "${WORK_DIR}/db-table-counts.tsv" \
+    "${WORK_DIR}/attachment-references.tsv" \
+    "${WORK_DIR}/upload-relative-inventory.txt"
+  do
+    if [ ! -f "${path}" ]; then
+      continue
+    fi
+    if digest="$(compute_sha256 "${path}" 2>/dev/null)"; then
+      printf '%s  %s\n' "${digest}" "$(basename "${path}")" >> "${checksum_file}"
+    fi
+  done
+
+  if [ ! -s "${checksum_file}" ]; then
+    rm -f "${checksum_file}"
+  fi
+}
+
 write_manifest() {
   cat > "${WORK_DIR}/manifest.txt" <<MANIFEST_EOF
 exported_at=$(date -Is)
@@ -297,8 +349,10 @@ label=${LABEL}
 database_dump=old-system.dump
 uploads_archive=old-uploads.tar.gz
 upload_roots_list=upload-roots-included.txt
+upload_relative_inventory=upload-relative-inventory.txt
 attachment_references=attachment-references.tsv
 table_counts=db-table-counts.tsv
+internal_checksums=checksums.sha256
 MANIFEST_EOF
 }
 
@@ -313,17 +367,31 @@ write_readme() {
 - old-uploads.tar.gz：尽量收集到的 uploads 文件。
 - old-env-file：旧系统环境变量文件快照，可能包含密码，请妥善保管。
 - upload-roots-included.txt：实际被扫描/收集的附件目录。
+- upload-relative-inventory.txt：打包进 old-uploads.tar.gz 的相对文件清单。
 - attachment-references.tsv：数据库里记录的附件引用。
 - db-table-counts.tsv：导出时的表统计，用于迁移后粗略核对。
+- checksums.sha256：导出包内部关键文件的 SHA256。
 - runtime.txt：导出机器和工具版本。
 - systemd/、nginx/：旧部署配置快照。
 
-建议：
-1. 把整个 tar.gz 复制到新系统服务器。
-2. 用新系统迁移导入脚本恢复 old-system.dump。
-3. 解压 old-uploads.tar.gz 到新系统 UPLOADS_DIR 的父目录。
-4. 新系统启动后，核对学生、用户、课程、作业、通知和附件。
+建议流程：
+1. 在旧服务器先校验本包，再下载到 Windows。
+2. 下载时同时取走外层 tar.gz 和同目录下的 tar.gz.sha256。
+3. Windows 上用 Get-FileHash 或 windows_verify_bundle.ps1 校验下载文件。
+4. 把整个 tar.gz 上传到新系统服务器。
+5. 用新系统迁移导入脚本恢复 old-system.dump。
+6. 解压 old-uploads.tar.gz 到新系统 UPLOADS_DIR 的父目录。
+7. 导入完成后，用 post_import_verify.sh 对账表数量与附件文件。
 README_EOF
+}
+
+write_bundle_sha256() {
+  local digest
+  if ! digest="$(compute_sha256 "${BUNDLE_PATH}" 2>/dev/null)"; then
+    return 0
+  fi
+
+  printf '%s  %s\n' "${digest}" "$(basename "${BUNDLE_PATH}")" > "${BUNDLE_SHA256_PATH}"
 }
 
 ENV_FILE_FOUND="$(find_env_file || true)"
@@ -363,7 +431,7 @@ if [ ! -d "${UPLOADS_STAGE}" ]; then
   mkdir -p "${UPLOADS_STAGE}"
 fi
 tar -czf "${WORK_DIR}/old-uploads.tar.gz" -C "${WORK_DIR}/uploads-stage" uploads
-find "${UPLOADS_STAGE}" -type f > "${WORK_DIR}/upload-file-inventory.txt" 2>/dev/null || true
+write_upload_inventory "${UPLOADS_STAGE}"
 
 echo "开始导出附件引用和表统计。"
 : > "${WORK_DIR}/attachment-references.tsv"
@@ -377,14 +445,22 @@ write_table_counts
 echo "保存旧系统运行配置快照。"
 snapshot_runtime
 snapshot_configs
+write_internal_checksums
 write_manifest
 write_readme
 
 rm -rf "${WORK_DIR}/uploads-stage"
 tar -czf "${BUNDLE_PATH}" -C "${OUT_DIR}" "${LABEL}"
+write_bundle_sha256
 
 echo
 echo "导出完成。"
 echo "迁移包：${BUNDLE_PATH}"
 ls -lh "${BUNDLE_PATH}" 2>/dev/null || true
-echo "请把这个 tar.gz 复制到新系统服务器后执行导入。"
+if [ -f "${BUNDLE_SHA256_PATH}" ]; then
+  echo "SHA256：${BUNDLE_SHA256_PATH}"
+fi
+echo "建议下一步："
+echo "1. 先在旧服务器运行 verify_export_bundle.sh 校验导出包。"
+echo "2. 下载 ${BUNDLE_PATH} 和 ${BUNDLE_SHA256_PATH} 到 Windows。"
+echo "3. Windows 上校验 SHA256 后，再上传到新系统服务器导入。"
